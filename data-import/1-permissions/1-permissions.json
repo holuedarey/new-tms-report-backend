@@ -1,0 +1,17 @@
+[
+    {
+      "permission_name": "global"
+    },
+    {
+      "permission_name": "admin_permissions"
+    },
+    {
+      "permission_name": "merchant_permissions"
+    },
+    {
+      "permission_name": "configuration_permissions"
+    },
+    {
+      "permission_name": "agent_permissions"
+    }
+  ]

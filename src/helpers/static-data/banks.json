@@ -1,0 +1,20 @@
+[
+    {"name" : "ACCESS BANK", "code" : "ACCESS"},
+    {"name" : "ECO BANK", "code" : "ECO"},
+    {"name" : "FIDELITY BANK", "code" : "FIDELITY"},
+    {"name" : "FIRST BANK", "code" : "FIRST"},
+    {"name" : "FCMB BANK", "code" : "FCMB"},
+    {"name" : "HERITAGE BANK", "code" : "HERITAGE"},
+    {"name" : "KEYSTONE BANK", "code" : "KEYSTORE"},
+    {"name" : "SKYE BANK", "code" : "SKYE"},
+    {"name" : "STANBIC BANK", "code" : "STANBIC"},
+    {"name" : "UNION BANK", "code" : "UNION"},
+    {"name" : "UBA BANK", "code" : "UBA"},
+    {"name" : "WEMA BANK", "code" : "WEMA"},
+    {"name" : "ZENITH BANK", "code" : "ZENITH"},
+    {"name" : "STERLING BANK", "code" : "STERLING"},
+    {"name" : "GT BANK", "code" : "GTBANK"},
+    {"name" : "UNITY BANK", "code" : "UNITY"},
+    {"name" : "PROVIDUS BANK", "code" : "PROVIDUS"},
+    {"name" : "OTHERS", "code" : "UNKNOWN"}
+]

@@ -1,0 +1,38 @@
+Paysure web for users endpoints
+Change pin 
+Edit profile (name, number, email, address,picture)
+Transaction history (all,debit,credit, with date range filters)
+Frequent payments 
+Get transaction receipt 
+Notifications 
+Create user endpoint 
+
+paysure web for agents 
+Agent creation 
+Email service to welcome onboarded agents 
+
+
+Tms 
+Summary cards:{
+Total success trans 
+Total failed Trans
+Total  transactions 
+Total terminals 
+Total active terminals 
+Total inactive terminals 
+Total income due
+Ptsp due
+Tmo due
+Total volume of trans
+Wallet balance 
+Total settlement 
+Pending settlement 
+}
+
+See all transactions for the super admin 
+Edit user roles and permissions 
+Add/delete/edit users 
+Edit terminal details 
+Get agent request 
+Accept agent request 
+Decline agent request

@@ -1,0 +1,12 @@
+{
+    "hostip": "52.149.222.131",
+    "hostport_plain": "5002",
+    "hostport_ssl": "",
+    "nibssip": "196.6.103.73",
+    "nibssport_plain": "5043",
+    "nibssport_ssl": "",
+    "hostname": "EPMS",
+    "swkcomp1": "53C565823AC099A5FAC553C5DE27D81B",
+    "swkcomp2": "00000000000000000000000000000000",
+    "xorcomp1_2": "53C565823AC099A5FAC553C5DE27D81B"
+}

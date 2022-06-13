@@ -1,0 +1,26 @@
+[
+    {
+      "role_name": "SuperAdmin",
+      "permission": "global"
+    },
+    {
+      "role_name": "Admin",
+      "permission": "admin_permissions"
+    },
+    {
+      "role_name": "Agent",
+      "permission": "agent_permissions"
+    },
+    {
+      "role_name": "Merchant",
+      "permission": "merchant_permissions"
+    },
+    {
+      "role_name": "Support",
+      "permission": "configuration_permissions"
+    }
+
+
+  ]
+
+  
