@@ -10,12 +10,13 @@ import { ApiClient } from '../services/network.services';
 interface IUserServices {
     createUserSingle(data: any): any;
     createUsersBulk(data: IUsers[]): any;
-    getUsersInRole(role: string,page: string,limit: string): any;
+    getUsersInRole(role: string, page: string, limit: string): any;
     getUserDetails(username: string): any;
     getRoles(): any;
-    validateUser(email:string,phone:string,username:string): any;
+    validateUser(email: string, phone: string, username: string): any;
     getWalletBalance(isMain: boolean, username: string, password: string): any;
 }
+
 
 class UserServices {
 
@@ -33,13 +34,15 @@ class UserServices {
     }
 
 
-   async validateUser(email: string, phone: string, username: string) {
-        
-        const exisitngUser = await usersModel.findOne({$or: [
-            {email: email},
-            {username: username},
-            {phone: phone}
-        ]});
+    async validateUser(email: string, phone: string, username: string) {
+
+        const exisitngUser = await usersModel.findOne({
+            $or: [
+                { email: email },
+                { username: username },
+                { phone: phone }
+            ]
+        });
 
         return !!exisitngUser;
 
@@ -48,7 +51,7 @@ class UserServices {
     async getWalletBalance(isMain: boolean, walletId: string) {
         let token: string;
         let authCred;
-        if(isMain) {
+        if (isMain) {
 
             console.log(process.env.PAYSURE_USERNAME, process.env.PAYSURE_PASSWORD)
 
@@ -61,13 +64,13 @@ class UserServices {
 
             const user = await usersModel.findOne({ walletId });
 
-            if(user) {
+            if (user) {
                 // @ts-ignore
                 authCred = await this.authService.processAuth(user.username, Utils.AESDecrypt(user.aes_password));
 
-                if(authCred["token"] !== undefined) {
+                if (authCred["token"] !== undefined) {
                     token = authCred["token"];
-                } 
+                }
 
                 return { error: true, message: 'Could not fetch balance' };
             }
@@ -79,11 +82,11 @@ class UserServices {
 
         const headers = {
             authorization: `Bearer ${token}`
-        } 
+        }
 
         const response = await this.apiClient.sendGetRequest(headers, this.prepareWalletBalanceUrl(authCred.walletId));
 
-        return {error: false, data: response};
+        return { error: false, data: response };
     }
 
     prepareWalletBalanceUrl(walletId: string) {
@@ -94,7 +97,7 @@ class UserServices {
 
         // check if username || phone || email already exists on tms
 
-        if(this.validateUser(data.email, data.phone, data.username)) return false;
+        if (this.validateUser(data.email, data.phone, data.username)) return false;
 
         return await usersModel.create(data);
 
@@ -126,7 +129,7 @@ class UserServices {
 
     }
 
-    async getUsersInRole(role: any, page: any, limit:any =null) {
+    async getUsersInRole(role: any, page: any, limit: any = null) {
 
         this.$limit = limit === null ? this.$limit : parseInt(limit);
 
@@ -135,21 +138,23 @@ class UserServices {
         const $match = role !== null ? { role } : {};
 
         const users = await usersModel.aggregate([
-        { $match },
-        { $sort: {createdAt: -1 } },
-        { $skip: skip },
-        { $limit: this.$limit },
-        { $project: {
-            username: "$username", 
-            // password: "$password",
-            phone: "$phone",
-            email: "$email",
-            merchantCode: "$merchantCode",
-            walletId: "$walletId",
-            role: "$role"
-        }},
+            { $match },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: this.$limit },
+            {
+                $project: {
+                    username: "$username",
+                    // password: "$password",
+                    phone: "$phone",
+                    email: "$email",
+                    merchantCode: "$merchantCode",
+                    walletId: "$walletId",
+                    role: "$role"
+                }
+            },
         ]);
-        return users; 
+        return users;
 
 
     }
@@ -164,29 +169,29 @@ class UserServices {
 
 
     async addToUserRole(username: string, newRole: string) {
-    
-            return new Promise((resolve, reject) => {
 
-                usersModel.findOne({ username }, (err, data) => {
+        return new Promise((resolve, reject) => {
 
-                    if(err) return resolve({ error: true, message: "could not update user role" });
+            usersModel.findOne({ username }, (err, data) => {
 
-                    if(data === null) return resolve({ error: true, message: "could not find user to update role" });
+                if (err) return resolve({ error: true, message: "could not update user role" });
 
-                    if(data.roles.includes(newRole)) return resolve({ error: true, message: `user already has role: ${newRole}`})
+                if (data === null) return resolve({ error: true, message: "could not find user to update role" });
 
-                    let roles = data.roles.concat(newRole);
+                if (data.roles.includes(newRole)) return resolve({ error: true, message: `user already has role: ${newRole}` })
 
-                    data.roles = roles;
+                let roles = data.roles.concat(newRole);
 
-                    data.save();
+                data.roles = roles;
 
-                    data["password"] = undefined;
+                data.save();
 
-                    resolve({error: false, data});
+                data["password"] = undefined;
 
-                })
-            });
+                resolve({ error: false, data });
+
+            })
+        });
 
     }
 
@@ -196,9 +201,9 @@ class UserServices {
 
             usersModel.findOne({ username }, (err, data) => {
 
-                if(err) return resolve({ error: true, message:"could not update user role"});
+                if (err) return resolve({ error: true, message: "could not update user role" });
 
-                if(data === null) return resolve({ error: true, message:"could not find user to update role"});
+                if (data === null) return resolve({ error: true, message: "could not find user to update role" });
 
                 let roles = data.roles.filter((i: string) => i === roleToDelete);
 
@@ -215,62 +220,64 @@ class UserServices {
 
 
     async getOnboardedAgents(filter: any) {
-            this.$limit = !!filter.limit === false ? this.$limit : parseInt(filter.limit);
+        this.$limit = !!filter.limit === false ? this.$limit : parseInt(filter.limit);
 
-            const page = !!filter.page === false ? "1" : filter.page;
-    
-            const skip = Utils.setPage(page, this.$limit);
+        const page = !!filter.page === false ? "1" : filter.page;
 
-            // add other filter options
-            const $match = {};
+        const skip = Utils.setPage(page, this.$limit);
 
-            $match["userType"] = filter.userType === undefined ? "agent" : filter.userType;
+        // add other filter options
+        const $match = {};
 
-            if(filter.status) {
+        $match["userType"] = filter.userType === undefined ? "agent" : filter.userType;
 
-                $match["isApproved"] = filter.status === "approved" ? true : false;
-            }
+        if (filter.status) {
 
-            if(filter.parentCode) {
-                $match["parentCode"] = filter.parentCode 
-            }
+            $match["isApproved"] = filter.status === "approved" ? true : false;
+        }
 
-            if(filter.walletId) {
-                $match["walletId"] = filter.walletId
-            }
+        if (filter.parentCode) {
+            $match["parentCode"] = filter.parentCode
+        }
 
-            if(filter.state) {
-                $match["state"] = filter.state
-            }
-            const onboardedAgents = await userAgentmanagementModel.aggregate([
+        if (filter.walletId) {
+            $match["walletId"] = filter.walletId
+        }
+
+        if (filter.state) {
+            $match["state"] = filter.state
+        }
+        const onboardedAgents = await userAgentmanagementModel.aggregate([
             { $match },
-            { $sort: {createdAt: -1 } },
+            { $sort: { createdAt: -1 } },
             { $skip: skip },
             { $limit: this.$limit },
-            { $project: {
-                username: "$username", 
-                agentName: "$agentName",
-                contactPersonName: "$contactPersonName",
-                parentCode: "$parentCode",
-                walletId: "$walletId",
-                emailAddress: "$emailAddress",
-                logoUrl: "$logoUrl",
-                addressLine1: "$addressLine1",
-                addressLine2: "$addressLine2",
-                state: "$state",
-                lga: "$lga",
-                city: "$city",
-                bandName: "$bandName",
-                organisationCode: "$organisationCode",
-                userType: "$userType",
-                isApproved: "$isApproved",
-                dateOnBoarded: "$dateOnBoarded"
-            }},
-            ]);
+            {
+                $project: {
+                    username: "$username",
+                    agentName: "$agentName",
+                    contactPersonName: "$contactPersonName",
+                    parentCode: "$parentCode",
+                    walletId: "$walletId",
+                    emailAddress: "$emailAddress",
+                    logoUrl: "$logoUrl",
+                    addressLine1: "$addressLine1",
+                    addressLine2: "$addressLine2",
+                    state: "$state",
+                    lga: "$lga",
+                    city: "$city",
+                    bandName: "$bandName",
+                    organisationCode: "$organisationCode",
+                    userType: "$userType",
+                    isApproved: "$isApproved",
+                    dateOnBoarded: "$dateOnBoarded"
+                }
+            },
+        ]);
 
-            // console.log("onboarded agents: ", onboardedAgents);
+        // console.log("onboarded agents: ", onboardedAgents);
 
-            return onboardedAgents; 
+        return onboardedAgents;
     }
 
 
@@ -290,7 +297,7 @@ class UserServices {
             const authCred = await this.authService.processAuth(user.username, password);
             console.log(authCred);
 
-            if(!authCred) {
+            if (!authCred) {
                 return false;
             }
             const updateResponse = await userAgentManagemnt.findOneAndUpdate({ emailAddress }, { isApproved: action, walletId: authCred.walletId });
@@ -298,7 +305,7 @@ class UserServices {
         }
 
         const updateResponse = await userAgentManagemnt.findOneAndUpdate({ emailAddress }, { isApproved: action });
-    
+
         return updateResponse;
 
 
