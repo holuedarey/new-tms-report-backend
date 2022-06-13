@@ -10,7 +10,7 @@
     "seeddata": "npm run build && node dist/db/seeders/seeder.js",
     "seedroles": "npm run build && node src/db/seeders/user.seeders.js",
     "testnibss": "node test_http.js",
-    "start": "pm2 start dist/index.js --name tms-backend",
+    "start": "node dist/index.js",
     "restart": "pm2 restart dist/index.js --update-env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

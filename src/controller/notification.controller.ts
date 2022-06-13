@@ -8,12 +8,11 @@ import webServices from '../services/web.services';
 class NotificationController {
 
     constructor() {
-
     }
 
     public async AddService(request: Request, response: Response) {
 
-       try {
+        try {
 
             const responseData = await notificationServices.AddService(request.body);
 
@@ -21,7 +20,7 @@ class NotificationController {
 
         } catch (error) {
 
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
 
         }
 
@@ -33,13 +32,13 @@ class NotificationController {
 
             const responseData = await notificationServices.UpdateService(request.params.notificationId, request.body);
 
-            if(responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
+            if (responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData.data, "Operation successfully completed");
 
         } catch (error) {
 
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
 
         }
 
@@ -48,17 +47,17 @@ class NotificationController {
     public async DeleteService(request: Request, response: Response) {
 
         try {
-            
+
             const responseData = await notificationServices.DeleteService(request.params.notificationId);
 
-            if(responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
+            if (responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData.data, "Operation successfully completed");
 
 
         } catch (error) {
 
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
 
         }
 
@@ -70,15 +69,15 @@ class NotificationController {
 
             const responseData = await notificationServices.getOneService(request.params.notificationId);
 
-            if(responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
+            if (responseData.err) return ApiResponse.error(response, apiStatusCodes.notFound, null, 'Service not Found');
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData.data, "Data successfully retrieved");
 
         } catch (error) {
 
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
 
-            
+
         }
     }
 
@@ -93,14 +92,14 @@ class NotificationController {
             return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data successfully retrieved");
 
         } catch (error) {
-            
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
-            
+
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+
         }
 
     }
-    public async SearchServices(request:Request, response: Response){
-       
+    public async SearchServices(request: Request, response: Response) {
+
         try {
 
 
@@ -109,25 +108,25 @@ class NotificationController {
             return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data successfully retrieved");
 
         } catch (error) {
-            
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
-            
-        } 
+
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+
+        }
     }
 
-    public async UploadServices(request:Request, response: Response){
-       
+    public async UploadServices(request: Request, response: Response) {
+
         try {
-            
+
             const responseData = await notificationServices.BulkUpload();
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data successfully retrieved");
 
         } catch (error) {
-            
-           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
-            
-        } 
+
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+
+        }
     }
 
 
