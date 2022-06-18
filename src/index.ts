@@ -41,7 +41,7 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/test', (req, res) => {
-  res.json({ 'Bizzdesk running'})
+  res.json('Bizzdesk running')
 })
 
 // app.use(bodyparser.json({ limit: '50mb' }));
