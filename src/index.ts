@@ -40,6 +40,10 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/test', (req, res) => {
+  res.json({ 'Bizzdesk running'})
+})
+
 // app.use(bodyparser.json({ limit: '50mb' }));
 // app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(morgan(':date *** :method :: :url ** :response-time'));
@@ -48,6 +52,6 @@ app.use(morgan(':date *** :method :: :url ** :response-time'));
 app.use('/api/v1', Routes);
 
 app.listen(port, () => {
-    // if (err) return console.error(err);
-    return console.log(`Server Magic happening on port ${port}`);
+  // if (err) return console.error(err);
+  return console.log(`Server Magic happening on port ${port}`);
 });
