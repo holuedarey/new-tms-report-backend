@@ -26,6 +26,7 @@ let usersSchema = new mongoose.Schema({
     roles: [{
         type: String,
         required: true,
+        enum: ['super-admin', 'admin']
     }],
     
 },{timestamps : true});

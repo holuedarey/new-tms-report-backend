@@ -48,6 +48,7 @@ class TransactionServices implements ITransactionServices {
 
     let transactions: any[] = await Journals.find(match).read("primary");
 
+
     let transaction: any = transactions.filter((c) => c.MTI == "0200");
 
     if (transaction.length == 1) transaction = transaction[0];
@@ -87,7 +88,16 @@ class TransactionServices implements ITransactionServices {
       status = "FAILED";
     }
 
+
     if (!type) {
+      const terminal_details = await TerminalServices.getTerminal(transaction.terminalId)
+      const cardType = transaction?.maskedPan
+        ? Utils.getCardType(transaction.maskedPan)
+        : "";
+      const bank = transaction?.terminalId
+        ? Utils.bankfromTID(transaction.terminalId)
+        : "";
+
 
       return {
         MTI: transaction.MTI,
@@ -110,7 +120,10 @@ class TransactionServices implements ITransactionServices {
         customerRef: transaction.customerRef || "",
         transactionType: transaction.transactionType,
         vasproduct: transaction.vasproduct || "",
+        scheme: cardType,
+        bank,
         ...transaction.toObject(),
+        ...terminal_details.toObject(),
       };
     }
     // console.log(transaction);
@@ -210,8 +223,8 @@ class TransactionServices implements ITransactionServices {
     filter?.status === "success"
       ? (filter.responseCode = "00")
       : filter?.status === "failed"
-      ? (filter.responseCode = { $ne: "00" })
-      : "";
+        ? (filter.responseCode = { $ne: "00" })
+        : "";
 
     let match: any = await this.buildQuery(filter);
     let transactions = null;
@@ -257,8 +270,8 @@ class TransactionServices implements ITransactionServices {
     filter?.status === "success"
       ? (filter.responseCode = "00")
       : filter?.status === "failed"
-      ? (filter.responseCode = { $ne: "00" })
-      : "";
+        ? (filter.responseCode = { $ne: "00" })
+        : "";
 
     let match: any = await this.buildQuery(filter);
     let transactions = null;
@@ -1001,16 +1014,18 @@ class TransactionServices implements ITransactionServices {
       terminalId: terminalId,
       startdate: moment().format("YYYY-MM-DD").replace(/-/g, ""),
       enddate: moment().format("YYYY-MM-DD").replace(/-/g, ""),
+
     };
 
 
     const today = new Date();
 
     let match: any = await this.buildQuery(filter);
+    match.responseCode = "00"
 
     const transactions = await Journals.find(match).read("secondary");
 
-    const transactionVolume = transactions.map((i:any) => {
+    const transactionVolume = transactions.map((i: any) => {
       if (today.toDateString() === new Date(i.transactionTime).toDateString()) {
         return i.amount;
       }

@@ -5,6 +5,10 @@ import { validateRequest, validateStaticAuthorization, verifyToken } from '../mi
 import { extractCSVData } from '../middlewares/csvupload.middleware';
 import utils from '../helpers/utils';
 
+const singleUploader = utils.multerTempUploadHandler().single('file');
+console.log(singleUploader);
+
+
 
 const notificationRoute = express.Router();
 const regNotificationRoute = express.Router();
@@ -21,7 +25,7 @@ notificationRoute.get('/:notificationId', verifyToken, notificationContoller.Get
 notificationRoute.post('/search', verifyToken, notificationContoller.SearchServices);
 notificationRoute.put('/update/:notificationId', verifyToken, notificationContoller.UpdateService);
 
-// notificationRoute.post('/upload', extractCSVData, verifyToken, notificationContoller.Upload)
+notificationRoute.post('/upload/:method', verifyToken,singleUploader, extractCSVData, notificationContoller.UploadServices)
 
 
 // RegNotificationController Endpoints

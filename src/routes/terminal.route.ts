@@ -34,9 +34,10 @@ terminalRoute.get('/details/:serialNumber',
 validateStaticAuthorizationHeader, 
 terminalController.getTerminalDetails);
 
-terminalRoute.post('/assign/:method', verifyToken, singleUploader,
+terminalRoute.post('/assign/:method', verifyToken, 
+singleUploader,
     extractCSVData, 
-    validateAssignTerminalRequest(),
+    // validateAssignTerminalRequest(),
     terminalController.assignTerminal);
 
 terminalRoute.get('/getunassignterminaltowallet/:merchantCode', verifyToken, terminalController.getTerminalUnassignedToWallet);

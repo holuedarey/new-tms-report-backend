@@ -138,7 +138,40 @@ class AuthService {
     }
 
 
-    public async getRoles() {
+    public async getRoles() 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {
 
         const roles = await rolesModel.find({} , '-_id -__v');
 

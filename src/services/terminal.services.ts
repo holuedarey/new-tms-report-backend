@@ -51,7 +51,7 @@ interface ITerminalServices {
 }
 
 class TerminalServices implements ITerminalServices {
-  constructor() {}
+  constructor() { }
 
   public async getAllTerminalsByMerchantCodeNotAssignedToWallet(
     merchantCode: string,
@@ -72,7 +72,7 @@ class TerminalServices implements ITerminalServices {
   public async getAllTerminalsByMerchantCode(merchantCode: any, params = null) {
 
     const query: any = {};
-  
+
 
     if (params) {
       if (params.walletId) query.walletId = params.walletId;
@@ -84,18 +84,20 @@ class TerminalServices implements ITerminalServices {
       //   params.enabled = true;
       //   params.terminalId = { $nin: ["", null] };
       // }
-      if(params.active === "false")  params.enabled = false;
+      if (params.active === "false") params.enabled = false;
       // {
-       
+
       //   params.terminalId = { $in: ["", null] };
       // }
+
 
       params.merchantCode = merchantCode;
       delete params.active;
     }
 
-    console.log(params)
+
     const terminals = await TerminalConfig.find({ ...params });
+
 
 
 
@@ -108,28 +110,33 @@ class TerminalServices implements ITerminalServices {
     ]);
 
     const ser = [];
- terminals.map(async (terminal: any, index) => {
+    const items = terminals.map(async (terminal: any, index) => {
       if (terminal.terminalModel) {
+        await setTimeout(() => { }, 5000);
 
         const state = terminalStates.find((i: any) => i.terminalId === terminal?.terminalId);
         // const transactionDate = state?.lastTransactionTIme ? (new Date().getTime() - new Date(state.lastTransaction).getTime()) : 0;
-        const lastTransactionAmount = terminal?.terminalId ?await TransactionServices.checkLastTransaction(terminal?.terminalId) : ""
+        const lastTransactionAmount = terminal?.terminalId ? await TransactionServices.checkLastTransaction(terminal?.terminalId) : ""
         const type = terminal?.terminalModel.split(" ")[0];
         const model = terminal?.terminalModel.split(" ")[1];
-         
-      const PTSPFeetoday =   lastTransactionAmount  ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-      const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-        
+
+
+        const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+        const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+
         const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
 
         terminal.type = type;
         terminal.model = model;
 
-        ser.push({ ...terminal.toObject(), type, model,bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, ...state })
-     
+        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, ...state })
+
+
       }
     });
-     return  ser;
+    const resolved = await Promise.all(items)
+
+    return ser;
   }
 
   public async getActiveAndInactiveSummaryByMerchantCodeandWalletId(
@@ -138,16 +145,16 @@ class TerminalServices implements ITerminalServices {
     summary = false
   ) {
     const params = walletId;
-    console.log(1,merchantCode, walletId)
+    console.log(1, merchantCode, walletId)
 
-    const terminalObjs = await TerminalConfig.find({merchantCode: merchantCode });
+    const terminalObjs = await TerminalConfig.find({ merchantCode: merchantCode });
 
     // const terminalObjs = await this.getAllTerminalsByMerchantCode(
     //   merchantCode,
     //   params
     // );
 
-    console.log(1,terminalObjs.length)
+    console.log(1, terminalObjs.length)
 
     if (terminalObjs.length !== 0) {
       let active = [];
@@ -273,22 +280,22 @@ class TerminalServices implements ITerminalServices {
 
       data.enabled =
         typeof data.enabled === "string" &&
-        data.enabled.toLowerCase() === "true"
+          data.enabled.toLowerCase() === "true"
           ? true
           : false;
       data.defaultLogo =
         typeof data.defaultLogo === "string" &&
-        data.defaultLogo.toLowerCase() === "true"
+          data.defaultLogo.toLowerCase() === "true"
           ? true
           : false;
       data.canDoAgencyBanking =
         typeof data.canDoAgencyBanking === "string" &&
-        data.canDoAgencyBanking.toLowerCase() === "true"
+          data.canDoAgencyBanking.toLowerCase() === "true"
           ? true
           : false;
       data.canDoPurchase =
         typeof data.canDoPurchase === "string" &&
-        data.canDoPurchase.toLowerCase() === "true"
+          data.canDoPurchase.toLowerCase() === "true"
           ? true
           : false;
 
@@ -303,6 +310,7 @@ class TerminalServices implements ITerminalServices {
   public async assignTerminalBulk(data: any[], merchantCode: string = null) {
     const failed = [];
     const successful = [];
+
 
     for (const upload of data) {
       const terminalSerialChecker = await this.validateTerminalBySerialNumber(
@@ -536,7 +544,7 @@ class TerminalServices implements ITerminalServices {
         if (stateInformation.cloc) {
           cellInfo = stateInformation.cloc;
         }
-      } catch (error) {}
+      } catch (error) { }
 
       return {
         terminalId: stateInformation.tid,
@@ -1113,9 +1121,13 @@ class TerminalServices implements ITerminalServices {
   }
 
   public async getArchivedTerminals(filter: any) {
-    return await TerminalConfig.find({ terminalId: "" }).sort({
+    return await TerminalConfig.find({ $or: [{ terminalId: "" }, { terminalId: null }] }).sort({
       createdAt: -1,
     });
+  }
+
+  public async getTerminal(terminalId: string) {
+    return await TerminalConfig.findOne({ terminalId }).select(" -_id -createdAt -updateAt")
   }
 
   private async appendMerchantInfo(terminals: any[]) {

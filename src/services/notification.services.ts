@@ -207,7 +207,13 @@ class NotificationService {
     });
   }
 
-  public async BulkUpload() {
+  public async BulkUpload(data: any[]) {
+    const failed = [];
+    const success = [];
+
+    for(const upload of data){
+      
+    }
 
   }
 }
