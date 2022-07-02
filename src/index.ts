@@ -24,8 +24,17 @@ mongoose.connect(dbConfig.DATABASE_URL, dbConfig.options, (err) => {
 });
 
 /** Enable Cross Origin Resource Sharing */
-
 app.use(cors());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin,X-Requested-With,Content-Type,Accept,Authorization")
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE,OPTIONS');
+  next();
+});
+
 
 app.use(timeout('5m'));
 /** set parser to parse the request data in json format */
