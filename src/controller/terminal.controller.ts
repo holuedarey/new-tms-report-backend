@@ -394,9 +394,58 @@ class TerminalController {
             return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
         }
     }
+    public async remoteUpdateTerminal(request: Request, response: Response) {
+        try {
+            if (!request?.file) {
+                return ApiResponse.error(response, apiStatusCodes.serverError, null, "No file provided!");
+            }
 
+            let data = {
+                uploader_id: request.user,
+                path: request.headers.host + '/' + 'api/v1/terminal/download/' + request.file.filename,
+                ...request.body
+            }
+            console.log(1, data)
+            const responseData = await terminalServices.createRemoteUpdate(data);
 
+            return ApiResponse.success(response, apiStatusCodes.success, responseData, "Upload Successful");
 
+        } catch (error) {
+            console.log(1, error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+        }
+    }
+    public async getTerminalSoftwareList(request: Request, response: Response) {
+        try {
+            const responseData = await terminalServices.getTerminalSoftwareList();
+
+            return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data successfully retrieved");
+
+        } catch (error) {
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+        }
+    }
+    public async checkTerminalUpdateAvailability(request: Request, response: Response) {
+        try {
+            const responseData = await terminalServices.checkTerminalUpdateAvailability(request.params);
+
+            return ApiResponse.success(response, apiStatusCodes.success, responseData, "Retrived");
+
+        } catch (error) {
+            console.error(error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+        }
+    }
+    public async downloadUpdate(request: Request, response: Response) {
+        try {
+            const file = request.params.file;
+            return await terminalServices.downloadUpdate(file, response);
+
+        } catch (error) {
+            console.error(error);
+            return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+        }
+    }
 }
 
 

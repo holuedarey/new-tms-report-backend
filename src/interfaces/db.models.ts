@@ -18,3 +18,15 @@ export interface IUsers {
     walletId: string,
     roles: string[]
 }
+
+export interface IUpdate {
+    version: string;
+    description: string;
+    brand: string;
+    model: string;
+    fix: string;
+    specific_terminals: string,
+    terminals?: string[]
+    remarks: string
+    path: string
+}

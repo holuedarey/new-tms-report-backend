@@ -230,7 +230,7 @@ class TransactionServices implements ITransactionServices {
     let transactions = null;
     let ser = [];
 
-    console.log(filter, match);
+    // console.log(filter, match);
     if (filter.summary !== "true") {
       filter = Utils.setPaging(filter);
 
@@ -733,7 +733,7 @@ class TransactionServices implements ITransactionServices {
       if (Number(filter.amount.trim()) != NaN)
         match.amount = Number(filter.amount.trim());
     }
-    console.log(match);
+    // console.log(match);
 
     return match;
   }

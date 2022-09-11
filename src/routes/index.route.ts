@@ -8,7 +8,7 @@ import banksRoute from './banks.route';
 import authRoute from './auth.route';
 import { notificationRoute, regNotificationRoute } from './notification.route';
 
- 
+
 const indexRoutes = express.Router();
 
 indexRoutes.use('/terminal', terminalRoute);
@@ -24,7 +24,6 @@ indexRoutes.use('/regnotification', regNotificationRoute);
 indexRoutes.use('/users', userRoute);
 
 indexRoutes.use('/auth', authRoute);
-
 
 
 indexRoutes.get('/', (req, res) => Response.send(res, codes.success, 'This app is running.'));

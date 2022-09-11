@@ -1,50 +1,53 @@
 import express from 'express';
 import { terminalController } from '../controller/index.controller';
-import { validateStaticAuthorization, validateStaticAuthorizationHeader,
+import {
+    validateStaticAuthorization, validateStaticAuthorizationHeader,
     validateAssignTerminalRequest, validateRequest,
-    verifyToken} from '../middlewares/validators/requestValidator';
+    verifyToken
+} from '../middlewares/validators/requestValidator';
 import { assignTerminaToWallet } from '../middlewares/validators/schemas/terminal.schema';
 import { extractCSVData } from '../middlewares/csvupload.middleware';
 import Utils from '../helpers/utils';
+import { upload } from '../middlewares/upload.middleware';
 
 const terminalRoute = express.Router();
 const singleUploader = Utils.multerTempUploadHandler().single('file');
 
 
 
-terminalRoute.get('/detailsbyterminalId/:terminalId', 
+terminalRoute.get('/detailsbyterminalId/:terminalId',
     verifyToken,
     terminalController.getTerminalByTerminalId);
 
-terminalRoute.get('/detailsbySerialNumber/:serialNumber', 
+terminalRoute.get('/detailsbySerialNumber/:serialNumber',
     verifyToken,
     terminalController.getTerminalBySerialNumber);
 
-terminalRoute.get('/inactive-active/:merchantCode', 
-    verifyToken, 
+terminalRoute.get('/inactive-active/:merchantCode',
+    verifyToken,
     terminalController.getActiveAndInactiveSummaryByMerchantCodeandWalletId);
 
 
-terminalRoute.get('/getTerminals/:merchantCode', 
-    verifyToken, 
+terminalRoute.get('/getTerminals/:merchantCode',
+    verifyToken,
     terminalController.getTerminalsByMerchantCodeAndWalletId);
 
 
-terminalRoute.get('/details/:serialNumber', 
-validateStaticAuthorizationHeader, 
-terminalController.getTerminalDetails);
+terminalRoute.get('/details/:serialNumber',
+    validateStaticAuthorizationHeader,
+    terminalController.getTerminalDetails);
 
-terminalRoute.post('/assign/:method', verifyToken, 
-singleUploader,
-    extractCSVData, 
+terminalRoute.post('/assign/:method', verifyToken,
+    singleUploader,
+    extractCSVData,
     // validateAssignTerminalRequest(),
     terminalController.assignTerminal);
 
 terminalRoute.get('/getunassignterminaltowallet/:merchantCode', verifyToken, terminalController.getTerminalUnassignedToWallet);
 
-terminalRoute.put('/mapTerminalsToWalletId', 
-    validateRequest(assignTerminaToWallet), 
-    verifyToken, 
+terminalRoute.put('/mapTerminalsToWalletId',
+    validateRequest(assignTerminaToWallet),
+    verifyToken,
     terminalController.assignTerminalToWalletId);
 
 terminalRoute.put('/updateTerminal/:serialNumber',
@@ -79,5 +82,12 @@ terminalRoute.get('/health-check-pattern', verifyToken, terminalController.getHe
 
 terminalRoute.get('/archived-terminals', verifyToken, terminalController.getArchivedTerminals);
 
+terminalRoute.post('/upload-software', verifyToken, upload.single('file'), terminalController.remoteUpdateTerminal);
+
+terminalRoute.get('/update-list', verifyToken, terminalController.getTerminalSoftwareList);
+
+terminalRoute.get('/update/:brand/:model/:current_version/:serial_number', validateStaticAuthorizationHeader, terminalController.checkTerminalUpdateAvailability);
+
+terminalRoute.get('/download/:file', terminalController.downloadUpdate)
 
 export default terminalRoute;

@@ -8,6 +8,9 @@ import TerminalKeys from "../db/model/terminalkeys.model";
 import HostConfig from "../db/model/hostConfigs.model";
 import MerchantModel from "../db/model/merchantSummary.model";
 import TransactionServices from "./transaction.services";
+import UpdateModel from "../db/model/remote.update"
+import { IUpdate } from "../interfaces/db.models";
+import path from 'path'
 
 
 
@@ -333,6 +336,8 @@ class TerminalServices implements ITerminalServices {
   }
 
   public async updateTerminalSingle(data: any, params: any, query: any) {
+    // "editor.experimental.stickyScroll.enabled": true,
+    console.log('data', data, 'params', params)
     const { serialNumber } = params;
 
     const findTerminal = await TerminalConfig.findOne({
@@ -358,6 +363,7 @@ class TerminalServices implements ITerminalServices {
         .then((data) => resolve(data))
         .catch((err) => resolve(false));
     });
+
   }
 
   public async updateTerminalIdBySerialNumber(serialNumber, terminalId) {
@@ -785,7 +791,7 @@ class TerminalServices implements ITerminalServices {
       .allowDiskUse(true)
       .read("secondary");
 
-    console.log(terminals);
+    // .log(terminals);
 
     let data = { active: 0 };
     if (terminals && terminals.length) data.active = terminals[0].count;
@@ -1164,6 +1170,61 @@ class TerminalServices implements ITerminalServices {
 
     return data;
   }
+  public async createRemoteUpdate(body: IUpdate) {
+
+    const new_update = new UpdateModel(body)
+    await new_update.save()
+
+    return new_update
+
+  }
+  public async getTerminalSoftwareList() {
+    return await UpdateModel.find({}).sort({ createdAt: -1 })
+  }
+  public async checkTerminalUpdateAvailability(params: any) {
+
+    const { brand, model, current_version, serial_number } = params
+    const findUpdate = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
+    console.log(current_version != findUpdate[0]?.version)
+    console.log(findUpdate)
+    if (findUpdate.length > 0) {
+      if (current_version != findUpdate[0].version && JSON.parse(findUpdate[0]?.terminals).includes(serial_number)) {
+        return {
+          'message': 'new update found with serial number',
+          'version': findUpdate[0].version,
+          'brand': findUpdate[0].brand,
+          'model': findUpdate[0].model,
+          'serial_number': serial_number,
+          'download_link': findUpdate[0].path
+        }
+      } else {
+        return {
+          'message': 'no new update found with serial number',
+          'version': findUpdate[0].version,
+          'brand': findUpdate[0].brand,
+          'model': findUpdate[0].model,
+          'serial_number': serial_number,
+          'download_link': ""
+        }
+      }
+    } else {
+      return {
+        'message': `no update available for the ${brand}, ${model}`,
+      }
+
+    }
+  }
+  public async downloadUpdate(file: any, response) {
+    try {
+      const update = path.join(__dirname + `/../../uploads/software_updates/${file}`).replace(/\\/g, '/')
+      response.download(update)
+    } catch (error) {
+      response.header("Content-Type", 'application/json').status(500).send({});
+
+    }
+  }
+
 }
+
 
 export default new TerminalServices();

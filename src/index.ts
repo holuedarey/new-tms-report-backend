@@ -8,6 +8,7 @@ import Routes from './routes/index.route';
 import Config from './config/config';
 import Logger from './helpers/logger';
 import 'dotenv/config';
+import path from 'path';
 
 const app = express();
 const port = process.env.PORT || '8000';
@@ -25,6 +26,9 @@ mongoose.connect(dbConfig.DATABASE_URL, dbConfig.options, (err) => {
 
 /** Enable Cross Origin Resource Sharing */
 app.use(cors());
+app.use(express.static(path.join(__dirname, '/../uploads')));
+
+
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
