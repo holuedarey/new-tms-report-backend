@@ -1185,10 +1185,10 @@ class TerminalServices implements ITerminalServices {
 
     const { brand, model, current_version, serial_number } = params
     const findUpdate = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
-    console.log(current_version != findUpdate[0]?.version)
-    console.log(findUpdate)
     if (findUpdate.length > 0) {
-      if (current_version != findUpdate[0].version && JSON.parse(findUpdate[0]?.terminals).includes(serial_number)) {
+      const available_terminals = JSON.parse(findUpdate[0].terminals).map((terminal: string) => { return terminal.trim() })
+      // console.log(JSON.parse(findUpdate[0].terminals), available_terminals, current_version != findUpdate[0].version && available_terminals.includes(serial_number))
+      if (current_version != findUpdate[0].version && available_terminals.includes(serial_number)) {
         return {
           'message': 'new update found with serial number',
           'version': findUpdate[0].version,
