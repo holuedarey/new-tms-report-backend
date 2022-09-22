@@ -36,6 +36,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.10.0",
     "joi": "^14.3.1",
+    "json2csv": "^5.0.7",
     "json2xls": "^0.1.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.26.0",

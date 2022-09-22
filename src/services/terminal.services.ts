@@ -1195,6 +1195,8 @@ class TerminalServices implements ITerminalServices {
           'brand': findUpdate[0].brand,
           'model': findUpdate[0].model,
           'serial_number': serial_number,
+          'host': process.env.HOSTIP,
+          'port': process.env.PORT,
           'download_link': findUpdate[0].path
         }
       } else {

@@ -3,6 +3,7 @@ import 'dotenv/config';
 const apiStatusCodes = {
     success: 0,
     created: 0,
+    noData: 1,
     httpSuccess: 200,
     noContent: 204,
     badRequest: 400,
@@ -16,7 +17,7 @@ const apiStatusCodes = {
 };
 
 
-const threshold =  {
+const threshold = {
     A: Number(process.env.BandA_threshold) || 100000000,
     B: Number(process.env.BandB_threshold) || 20000000,
     C: Number(process.env.BandC_threshold) || 15000000,
@@ -47,9 +48,11 @@ const paysurecoreCredentials = {
 const paysurecoreEndpoints = {
     gettoken: `${process.env.PAYSURECOREBASEURL}/login/auth`,
     addterminals: `${process.env.PAYSURECOREBASEURL}/merchants/addterminals`,
-    getTerminalsByMerchantCode:`${process.env.PAYSURECOREBASEURL}/merchants/`, // to be added to this url /:merchantCode/terminals
+    getTerminalsByMerchantCode: `${process.env.PAYSURECOREBASEURL}/merchants/`, // to be added to this url /:merchantCode/terminals
 }
 
 
-export { apiStatusCodes, threshold, weekThreshold, 
-    dateGroup, paysurecoreEndpoints, paysurecoreCredentials }
+export {
+    apiStatusCodes, threshold, weekThreshold,
+    dateGroup, paysurecoreEndpoints, paysurecoreCredentials
+}

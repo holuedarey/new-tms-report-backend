@@ -402,7 +402,7 @@ class TerminalController {
 
             let data = {
                 uploader_id: request.user,
-                path: request.headers.host + '/' + 'api/v1/terminal/download/' + request.file.filename,
+                path: '/' + 'api/v1/terminal/download/' + request.file.filename,
                 ...request.body
             }
             console.log(1, data)
@@ -429,7 +429,13 @@ class TerminalController {
         try {
             const responseData = await terminalServices.checkTerminalUpdateAvailability(request.params);
 
-            return ApiResponse.success(response, apiStatusCodes.success, responseData, "Retrived");
+            if (responseData.download_link) {
+                return ApiResponse.success(response, apiStatusCodes.success, responseData, " retrieved");
+            } else {
+                return ApiResponse.success(response, apiStatusCodes.noData, responseData, "no new update found with serial number");
+            }
+
+
 
         } catch (error) {
             console.error(error);
