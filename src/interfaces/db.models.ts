@@ -1,3 +1,5 @@
+import { Document } from "mongoose";
+
 export interface IPermissions {
     permission_name: string,
     description: string,
@@ -18,6 +20,19 @@ export interface IUsers {
     walletId: string,
     roles: string[]
 }
+
+export interface IUserToken extends Document {
+    isApproved: boolean;
+    roles: any[];
+    permissions: any[];
+    username: string;
+    emailAddress: string;
+    phoneNumber: string;
+    walletId: string;
+    merchantCode: string;
+    iat: number;
+    exp: number;
+};
 
 export interface IUpdate {
     version: string;

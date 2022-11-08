@@ -7,15 +7,26 @@ const signInSchema = Joi.object(
         "password": Joi.string().required(),
     });
 
+
+const changeRoleSchema = Joi.object(
+    {
+        "newRole": Joi.string().required()
+    });
+
+const activateDeactivateSchema = Joi.object(
+    {
+        "email": Joi.string().required()
+    });
 const createUserSchema = Joi.object(
     {
         "username": Joi.string(),
-        "email": Joi.string().required(),
-        "phone": Joi.string().required(),
+        "name": Joi.string(),
+        "emailAddress": Joi.string().required(),
+        "phoneNumber": Joi.string().required(),
         "password": Joi.string().required(),
-        "merchantCode": Joi.string().required(),
-        "walletId": Joi.string().required(),
-        "roles": Joi.string().required()
+        "role": Joi.string().required(),
+        "permission": Joi.string().required(),
+
     });
 
 
@@ -24,5 +35,5 @@ const createUserBulk = Joi.array().items(createUserSchema);
 
 
 
-export { createUserBulk, createUserSchema, signInSchema,  };
+export { createUserBulk, createUserSchema, signInSchema, changeRoleSchema, activateDeactivateSchema };
 

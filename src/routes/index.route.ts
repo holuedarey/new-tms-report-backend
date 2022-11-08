@@ -7,6 +7,7 @@ import userRoute from './user.route';
 import banksRoute from './banks.route';
 import authRoute from './auth.route';
 import { notificationRoute, regNotificationRoute } from './notification.route';
+import AuditEvent from '../events/audits.events';
 
 
 const indexRoutes = express.Router();
@@ -25,7 +26,11 @@ indexRoutes.use('/users', userRoute);
 
 indexRoutes.use('/auth', authRoute);
 
-
+indexRoutes.get('/event', (req, res) => {
+    const event  = new AuditEvent();
+    event.emit('complete', "aduitPayload")
+    return Response.send(res, codes.success, "ok")
+});
 indexRoutes.get('/', (req, res) => Response.send(res, codes.success, 'This app is running.'));
 
 indexRoutes.get('*', (req, res) => Response.send(res, codes.notFound, 'Endpoint not found.'));

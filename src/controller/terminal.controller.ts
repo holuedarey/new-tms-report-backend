@@ -92,10 +92,14 @@ class TerminalController {
     public async getTerminalDetails(request: Request, response: Response) {
         try {
 
+            console.log("Loggingf::")
+            console.log()
             const queryParams: any = request.query;
             const terminalDetails: any = request.query["byTerminal"] && request.query["byTerminal"] === 'true'
                 ? await terminalServices.getTerminalByTerminalId(request.params.serialNumber)
                 : await terminalServices.getTerminalBySerialNumberandMerchantCode(request.params.serialNumber, queryParams.merchantCode);
+
+            if (!terminalDetails) {console.log("hostDetails ::")}
 
             if (!terminalDetails) return ApiResponse.error(response, apiStatusCodes.badRequest, null, "Could not fetch terminal detail");
 
@@ -104,10 +108,10 @@ class TerminalController {
                 : await terminalServices.getHostConfigByHostName(terminalDetails.primaryHost);
 
             let agentDetails = null;
-
+            console.log("hostDetails ::", hostDetails)
             if (terminalDetails.walletId !== null || terminalDetails.walletId !== "") {
-
-                agentDetails = await userServices.getUserByWalletId(terminalDetails.walletId);
+                const userServ =  new userServices()
+                agentDetails = await userServ.getUserByWalletId(terminalDetails.walletId);
 
             }
 

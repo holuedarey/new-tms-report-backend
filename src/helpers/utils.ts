@@ -26,6 +26,8 @@ class Utils {
 
     public static checkNumber(input: string) { return `${input}`.search(/\D/) < 0 };
 
+    public static getRegExp = text => new RegExp(`${text}`.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'i');
+
     public static hashpassword(pwd: string) {
         const salt = bcrypt.genSaltSync(15);
         const password = bcrypt.hashSync(pwd, salt);
@@ -42,9 +44,6 @@ class Utils {
       }
     
     public static generateAccessToken(data: object, key: string) {
-
-        console.log("data: ", data);
-        console.log("key: ", key);
         console.log(process.env.JWTTOKENEXPIRESIN);
         const authToken = jwt.sign(
           JSON.parse(JSON.stringify(data)), key,

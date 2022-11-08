@@ -17,10 +17,7 @@ class PolicyConfigValidations {
   }
 
   public async isAdmin(req: Request, res: Response, next: Function) {
-    const authToken: any = jwt.verify(req.headers.authorization, process.env.API_SECRET_KEY);
-
-    if(!authToken.roles.includes("admin")) {
-        // console.log(authToken);
+    if(!req.user.roles.includes("admin")) {
         return ApiResponse.error(res, apiStatusCodes.forbidden, null,"Resource Restricted to only Admin");
     }         
     

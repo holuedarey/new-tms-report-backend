@@ -1184,7 +1184,7 @@ class TerminalServices implements ITerminalServices {
   public async checkTerminalUpdateAvailability(params: any) {
 
     const { brand, model, current_version, serial_number } = params
-    const findUpdate = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
+    const findUpdate:any = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
     if (findUpdate.length > 0) {
       const available_terminals = JSON.parse(findUpdate[0].terminals).map((terminal: string) => { return terminal.trim() })
       // console.log(JSON.parse(findUpdate[0].terminals), available_terminals, current_version != findUpdate[0].version && available_terminals.includes(serial_number))

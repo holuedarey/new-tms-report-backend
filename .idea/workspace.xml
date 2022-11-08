@@ -2,16 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="101a75da-bee2-490f-90c3-e5a42b702e54" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/services/audit.services.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/notification.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/notification.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/terminal.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/terminal.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/db/model/users.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/model/users.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/auth.services.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/auth.services.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/services/terminal.services.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/terminal.services.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/transaction.services.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/transaction.services.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2EOe0ajrV9By3myi83I3qBuf1NJ" />
   <component name="ProjectViewState">
@@ -23,9 +38,17 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/samuelogunwole/Downloads/development/tms/new-tms-backend-reports/src/services",
+    "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "/Users/samuelogunwole/Downloads/development/tms/new-tms-backend-reports/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/services" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -35,7 +58,28 @@
       <option name="presentableId" value="Default" />
       <updated>1662470839334</updated>
       <workItem from="1662470843662" duration="9000" />
+      <workItem from="1666595657875" duration="3867000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/db/model/roles.model.js" />
+        <option value="$PROJECT_DIR$/src/db/seeders/user.seeders.js" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

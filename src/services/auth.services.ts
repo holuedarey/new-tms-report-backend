@@ -9,116 +9,64 @@ class AuthService {
 
     public async signInAgents() {
 
-        
+
 
     }
 
 
     public async processAuth(username: string, password: string) {
-        
+
         const response = await Webservice.getPaysureCoreToken(username, password, true);
 
         return response;
 
     }
 
-    private prepareAuthEndpoint(requestUrl: string = null): string{
+    private prepareAuthEndpoint(requestUrl: string = null): string {
 
         //let urlPath = requestUrl.split("auth")[1];
         return `${process.env.PAYSURECOREBASEURL}/login/auth`;
     }
-  
+
 
 
     public async signIn(username: string, password: string) {
 
-        const user: any = await usersModel.findOne({ $or: [
-            { emailAddress: username },
-            { phoneNumber: username },
-            { username }
-        ]}, '-_id -__v -createdAt -updatedAt');
-
-        if(user === null) {
-
-            const userCred = await this.processAuth(username, password);
-
-            if (userCred["token"] !== undefined) {
-                // save user details to db
-                userCred["password"] = await Utils.hashPassword(password);
-                userCred["aes_password"] = Utils.AESEncrypt(password);
-
-                const dbUser = await this.addUser(userCred);
-
-                dbUser["password"] = undefined;
-
-                 return { error: false, 
-                    message: "Sign In Successful",
-                    data: {
-                    data: dbUser, 
-                    token: Utils.generateAccessToken(dbUser, process.env.API_SECRET_KEY),
-                    tokenExpiresIn: process.env.JWTTOKENEXPIRESIN
-                }};
-    
-            } else {
-
-                return {
-                    error: true, 
-                    message: "Invalid Credntials, Ensure username is correct and email/phone is verified",
-                    data: null
-                };
-
-            }
-        } else {
-            if(Utils.validatePassword(password, user.password)) 
-            {
-                user["password"] = undefined;
-
-                return { error: false, 
-                    message: "Sign In Successful",
-                    data: {
-                    data: user, 
-                    token: Utils.generateAccessToken(user, process.env.API_SECRET_KEY),
-                    tokenExpiresIn: process.env.JWTTOKENEXPIRESIN
-                }}
-            } 
-
+        const user: any = await usersModel.findOne({
+            $or: [
+                { emailAddress: username },
+                { phoneNumber: username },
+                { username }
+            ]
+        }, '-_id -__v -createdAt -updatedAt');
+        
+        if(user.isApproved != true){
             return {
-                error: true, 
-                message: "Invalid Password",
+                error: true,
+                message: "Account Not Actvated",
                 data: null
             };
+    
+        }
+        if (Utils.validatePassword(password, user.password)) {
+            user["password"] = undefined;
 
+            return {
+                error: false,
+                message: "Sign In Successful",
+                data: {
+                    data: user,
+                    token: Utils.generateAccessToken(user, process.env.API_SECRET_KEY),
+                    tokenExpiresIn: process.env.JWTTOKENEXPIRESIN
+                }
+            }
         }
 
-
-
-        // sign user through paysure core
-        // if successful save the hash password and other credentials to db 
-        // else return error
-
-
-
-        // if(user !== null) {
-
-        //     if(Utils.validatePassword(password, user.password)) 
-        //     {
-        //         return { error: false, 
-        //             message: "Sign In Successful",
-        //             data: {
-        //             data: user, 
-        //             token: Utils.generateAccessToken(user, process.env.API_SECRET_KEY),
-        //             tokenExpiresIn: process.env.JWTTOKENEXPIRESIN
-        //         }}
-        //     } 
-
-        //     return {
-        //         error: true, 
-        //         message: "Invalid Password",
-        //         data: null
-        //     };
-        // }
-        
-        // return { error: true, message: "Invalid Username (Email, Username or Mobile)", data: null };
+        return {
+            error: true,
+            message: "Invalid Username / Password",
+            data: null
+        };
 
     }
 
@@ -138,42 +86,9 @@ class AuthService {
     }
 
 
-    public async getRoles() 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    {
+    public async getRoles() {
 
-        const roles = await rolesModel.find({} , '-_id -__v');
+        const roles = await rolesModel.find({}, '-_id -__v');
 
         return roles;
 
@@ -200,9 +115,9 @@ class AuthService {
             { $sort },
             { $skip: paging.skip },
             { $limit: paging.pageSize },
-          ]);
+        ]);
 
-          return { users, paging };
+        return { users, paging };
 
     }
 

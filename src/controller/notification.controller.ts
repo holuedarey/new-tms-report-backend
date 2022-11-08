@@ -7,7 +7,7 @@ import webServices from '../services/web.services';
 
 class NotificationController {
 
-    constructor() {
+    r1qconstructor() {
 
     }
 
