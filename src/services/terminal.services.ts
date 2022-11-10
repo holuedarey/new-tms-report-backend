@@ -132,7 +132,7 @@ class TerminalServices implements ITerminalServices {
         terminal.type = type;
         terminal.model = model;
 
-        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, ...state })
+        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday })
 
 
       }
