@@ -34,7 +34,7 @@ class AuditTrailService {
 
   setRoles(role) {
     if (role) {
-      this.$match.user.role = { $in: role };
+      this.$match['user.role'] = role;
     }
     return this;
   }
@@ -78,14 +78,14 @@ class AuditTrailService {
 
   setUsername(name) {
     if (name) {
-      this.$match.user.name = name;
+      this.$match['user.name'] = name;
     }
     return this;
   }
 
   setUserEmail(email) {
     if (email) {
-      this.$match.user.email = email;
+      this.$match['user.email'] = email;
     }
     return this;
   }
@@ -102,9 +102,9 @@ class AuditTrailService {
       $or.push(getSObj('auditType'));
       $or.push(getSObj('disputeId'));
       $or.push(getSObj('description'));
-      $or.push(getSObj(`$user.name`));
-      $or.push(getSObj(`$user.role`));
-      $or.push(getSObj(`$user.email`));
+      $or.push(getSObj(`user.name`));
+      $or.push(getSObj(`user.role`));
+      $or.push(getSObj(`user.email`));
       // if (checkNumber(search)) $or.push(getSObj(transMod.getField('amount')));
       this.$match.$or = $or;
     }
@@ -164,9 +164,8 @@ class AuditTrailService {
    * Gets all Audit Trails
    * @returns {Object}
    */
-   async getAudits(page = 1, limit, search = null) {
-    const offset = (page - 1) * limit;
-
+   async getAudits() {
+  
     const project = {
       auditActivity: 1,
       auditType: 1,
@@ -174,14 +173,15 @@ class AuditTrailService {
       ipAddress: 1,
       description: 1,
       createdAt: 1,
-      //updatedAt: 1,
+      updatedAt: 1,
     };
 
+   
     let audits = await Audit.aggregate([
       { $match: this.$match },
       { $sort: { createdAt: -1 } },
-      { $skip: offset },
-      { $limit: parseInt(limit) },
+      { $skip: this.$skip },
+      { $limit: this.$limit },
       { $project: project },
     ]);
 

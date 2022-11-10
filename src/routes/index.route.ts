@@ -8,6 +8,7 @@ import banksRoute from './banks.route';
 import authRoute from './auth.route';
 import { notificationRoute, regNotificationRoute } from './notification.route';
 import AuditEvent from '../events/audits.events';
+import auditRoute from './audit.route';
 
 
 const indexRoutes = express.Router();
@@ -25,6 +26,7 @@ indexRoutes.use('/regnotification', regNotificationRoute);
 indexRoutes.use('/users', userRoute);
 
 indexRoutes.use('/auth', authRoute);
+indexRoutes.use('/audit-trail', auditRoute);
 
 indexRoutes.get('/event', (req, res) => {
     const event  = new AuditEvent();

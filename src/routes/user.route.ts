@@ -25,6 +25,10 @@ userRoute.get('/users', verifyToken,
     PolicyConfig.isAdmin,
     userController.getUsersInRole);
 
+userRoute.get('/summary', verifyToken,
+    PolicyConfig.isAdmin,
+    userController.getUserSummary);
+
 
 userRoute.get('/roles',
     userController.getRoles);
@@ -45,7 +49,7 @@ userRoute.delete('/deleteuserfromrole/:username',
     PolicyConfig.isAdmin,
     userController.removeUserRole)
 
-    userRoute.put('/activate-deactivate',
+userRoute.put('/activate-deactivate',
     verifyToken,
     validateRequest(activateDeactivateSchema),
     validateUserExist,

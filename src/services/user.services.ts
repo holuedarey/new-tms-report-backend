@@ -245,6 +245,46 @@ class UserServices {
 
     }
 
+
+    async userSummary(){
+        let facet = {
+            "approvedStatus": [
+              { $match: {...this.$match, isApproved: true}},
+              {
+                $group: {
+                  _id: 0,
+                  count: {
+                    $sum: 1
+                  }
+                }
+              }
+            ],
+            "pendingStatus": [
+              { $match: {...this.$match, isApproved: false} },
+              {
+                $group: {
+                  _id: 0,
+                  count: {
+                    $sum: 1
+                  }
+                }
+              }
+            ],
+          };
+      
+          //console.log(facet);
+      
+          let userSummary = await usersModel.aggregate([
+            {
+              $facet: facet
+            },
+          ]);
+      
+      
+          return {
+            rows: userSummary,
+          };
+    }
     async getUserDetails(username: any) {
         return await usersModel.findOne({ username }, '-password -__v -_id');
     }

@@ -41,6 +41,8 @@ export enum AuditActionResources {
   DashboardView = 'pages:dashboard-view',
   UsersCreate= 'User Creatiion',
   UsersUpdate= 'User Update',
+  UsersLogin= 'User Login',
+  UsersActivate= 'User Activation',
   TerminalView = 'pages:service-band-view',
   MerchantView = 'pages:analytics-module-view',
   NotificationView = 'pages:load-point-analytics-view',

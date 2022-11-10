@@ -55,7 +55,7 @@ class AuthService {
                 error: false,
                 message: "Sign In Successful",
                 data: {
-                    data: user,
+                    user,
                     token: Utils.generateAccessToken(user, process.env.API_SECRET_KEY),
                     tokenExpiresIn: process.env.JWTTOKENEXPIRESIN
                 }

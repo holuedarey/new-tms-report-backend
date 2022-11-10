@@ -97,10 +97,10 @@ class TerminalServices implements ITerminalServices {
       params.merchantCode = merchantCode;
       delete params.active;
     }
+    console.log("payload:", params)
 
 
     const terminals = await TerminalConfig.find({ ...params });
-
 
 
 
@@ -111,6 +111,8 @@ class TerminalServices implements ITerminalServices {
     const terminalStates = await TerminalStates.aggregate([
       { $match: { terminalId: { $in: terminal } } },
     ]);
+
+    console.log("terminalStates:", terminalStates)
 
     const ser = [];
     const items = terminals.map(async (terminal: any, index) => {
@@ -131,8 +133,8 @@ class TerminalServices implements ITerminalServices {
 
         terminal.type = type;
         terminal.model = model;
-
-        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, ...state })
+        // state.serialNumber = undefined;
+        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
 
 
       }

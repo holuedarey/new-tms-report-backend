@@ -86,6 +86,20 @@ class UserController {
             return ApiResponse.error(response, apiStatusCodes.badRequest, null, 'Could not activate/deactivate user, invalid profile');
          }
 
+         const ts_hms = new Date().toISOString();
+         const aduitPayload = {
+            auditActivity: AuditEventResources.UsersView,
+            auditType: AuditActionResources.UsersActivate,
+            description: `${request.user.emailAddress} update a new user @ ${ts_hms}`,
+            user: {
+               name: request.user.name || "",
+               email: request.user.emailAddress,
+               role: request.user.roles[0] || "",
+            },
+            ipAddress: "IP.address()"
+         }
+         const event = new AuditEvent();
+         event.emit('complete', aduitPayload)
          return ApiResponse.success(response, apiStatusCodes.success,
             null,
             `Agent was successfully ${messageAction}`);
@@ -118,6 +132,25 @@ class UserController {
 
          return ApiResponse.success(response,
             apiStatusCodes.success, responseData, `Data retrieved successfully`);
+
+      } catch (error) {
+
+         return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
+
+      }
+   }
+
+   public async getUserSummary(request: Request, response: Response) {
+      try {
+
+         const { role, page, limit, startDate, endDate, search, email, permissions, approval } = request.query;
+
+         const userServ =  new UserServices()
+         const responseData = await userServ
+         .userSummary();
+
+         return ApiResponse.success(response,
+            apiStatusCodes.success, responseData.rows, `Data retrieved successfully`);
 
       } catch (error) {
 
@@ -178,7 +211,7 @@ class UserController {
          const aduitPayload = {
             auditActivity: AuditEventResources.UsersView,
             auditType: AuditActionResources.UsersUpdate,
-            description: `${request.user.emailAddress} create a new user @ ${ts_hms}`,
+            description: `${request.user.emailAddress} update a new user @ ${ts_hms}`,
             user: {
                name: request.user.name || "",
                email: request.user.emailAddress,
@@ -220,7 +253,7 @@ class UserController {
          const aduitPayload = {
             auditActivity: AuditEventResources.UsersView,
             auditType: AuditActionResources.UsersUpdate,
-            description: `${request.user.emailAddress} create a new user @ ${ts_hms}`,
+            description: `${request.user.emailAddress} update a new user @ ${ts_hms}`,
             user: {
                name: request.user.name || "",
                email: request.user.emailAddress,
