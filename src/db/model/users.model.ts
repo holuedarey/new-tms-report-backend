@@ -37,7 +37,7 @@ let usersSchema = new mongoose.Schema({
     permissions: [{
         type: String,
         required: true,
-        enum: ['requester', 'approval']
+        enum: ['maker', 'checker']
     }],
     
 },{timestamps : true});
