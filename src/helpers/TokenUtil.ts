@@ -1,6 +1,6 @@
 import jsonwebtoken from 'jsonwebtoken';
 import cryptojs from 'crypto-js';
-import Logger from './Logger';
+// import Logger from './Logger';
 
 /**
  * @class TokenUtil

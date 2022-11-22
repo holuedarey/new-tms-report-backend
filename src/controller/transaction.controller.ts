@@ -10,7 +10,7 @@ import { apiStatusCodes  } from "../helpers/constants";
 import TerminalService from '../services/terminal.services';
 import { curDate, validateMongoID, getPrevStartEndDate } from '../helpers/util';
 // import MerchantService from '../database/services/MerchantService';
-import Logger from '../helpers/Logger';
+// import Logger from '../helpers/Logger';
 import { ObjectID } from 'mongodb';
 import Journals from "../db/model/journal.model";
 import { transMod } from "../config";
