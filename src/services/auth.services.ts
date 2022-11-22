@@ -40,7 +40,7 @@ class AuthService {
             ]
         }, '-_id -__v -createdAt -updatedAt');
         
-        if(user.isApproved != true){
+        if(user.isApproved ==  false){
             return {
                 error: true,
                 message: "Account Not Actvated",
