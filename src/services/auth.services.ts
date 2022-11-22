@@ -40,14 +40,15 @@ class AuthService {
             ]
         }, '-_id -__v -createdAt -updatedAt');
         
-        if(user.isApproved ==  false){
-            return {
-                error: true,
-                message: "Account Not Actvated",
-                data: null
-            };
+        console.log("user::", user)
+        // if(user.isApproved ==  false){
+        //     return {
+        //         error: true,
+        //         message: "Account Not Actvated",
+        //         data: null
+        //     };
     
-        }
+        // }
         if (Utils.validatePassword(password, user.password)) {
             user["password"] = undefined;
 
