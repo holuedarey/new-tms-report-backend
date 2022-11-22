@@ -9,9 +9,9 @@ import HostConfig from "../db/model/hostConfigs.model";
 import MerchantModel from "../db/model/merchantSummary.model";
 import TransactionServices from "./transaction.services";
 import UpdateModel from "../db/model/remote.update"
-import { IUpdate } from "../interfaces/db.models";
+import { ITerminal, IUpdate } from "../interfaces/db.models";
 import path from 'path'
-
+import { checkNumber, generateFilename, getReportHeaders, removeFile, curDate, getRegExp, binConverter } from "../helpers/util";
 
 
 interface ITerminalServices {
@@ -54,7 +54,10 @@ interface ITerminalServices {
 }
 
 class TerminalServices implements ITerminalServices {
-  constructor() { }
+  private match;
+  constructor() {
+    this.match = {};
+  }
 
   public async getAllTerminalsByMerchantCodeNotAssignedToWallet(
     merchantCode: string,
@@ -121,7 +124,8 @@ class TerminalServices implements ITerminalServices {
 
         const state = terminalStates.find((i: any) => i.terminalId === terminal?.terminalId);
         // const transactionDate = state?.lastTransactionTIme ? (new Date().getTime() - new Date(state.lastTransaction).getTime()) : 0;
-        const lastTransactionAmount = terminal?.terminalId ? await TransactionServices.checkLastTransaction(terminal?.terminalId) : ""
+        const transServ = new TransactionServices();
+        let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
         const type = terminal?.terminalModel.split(" ")[0];
         const model = terminal?.terminalModel.split(" ")[1];
 
@@ -1186,7 +1190,7 @@ class TerminalServices implements ITerminalServices {
   public async checkTerminalUpdateAvailability(params: any) {
 
     const { brand, model, current_version, serial_number } = params
-    const findUpdate:any = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
+    const findUpdate: any = await UpdateModel.find({ $and: [{ model: model }, { brand: brand }] }).sort({ createdAt: -1 })
     if (findUpdate.length > 0) {
       const available_terminals = JSON.parse(findUpdate[0].terminals).map((terminal: string) => { return terminal.trim() })
       // console.log(JSON.parse(findUpdate[0].terminals), available_terminals, current_version != findUpdate[0].version && available_terminals.includes(serial_number))
@@ -1227,7 +1231,129 @@ class TerminalServices implements ITerminalServices {
 
     }
   }
+  /**
+    * Gets the count of all terminals
+    */
+  async getAllCount(merchant_id = null, search = null) {
+    const filter = merchant_id ? { merchant_id } : {};
+    if (search) {
+      const $or = [];
+      filter['$or'] = [
+        { merchant_id: { $regex: Utils.getRegExp(search) } },
+        { terminal_id: { $regex: getRegExp(search) } },
+        { serial_no: { $regex: getRegExp(search) } },
+        { assigned_phone: { $regex: getRegExp(search) } },
+      ];
+    }
+    const count = await TerminalConfig.countDocuments({ ...this.match, ...filter });
+    return count;
+  }
 
+
+  /**
+ * Gets trminal statistics for given merchant ID
+ * @param {Array} merchantIds
+ */
+  async getMerchantsTerminalStats(merchantIds) {
+    const stats = await TerminalConfig.aggregate([
+      { $match: { ...this.match, merchant_id: { $in: merchantIds } } },
+      { $group: { _id: '$merchant_id', terminals_count: { $sum: 1 } } },
+      { $project: { merchant_id: '$_id', terminals_count: 1 } },
+    ]);
+
+    return stats;
+  }
+
+  /**
+   * This gets all terminals for given filter
+   * @param {Number} page
+   * @param {Number} limit
+   * @param {String} search
+   * @returns {Array} terminals
+   */
+   async getTerminals(page = 1, limit = 30, merchant, search = null, tIDs = []) {
+    const offset = (page - 1) * limit;
+
+    const filter = { ...this.match };
+    if (merchant) filter.merchant_id = merchant;
+    if (tIDs.length) {
+      filter.terminal_id = { $in: tIDs };
+    } else if (search) {
+      filter.$or = [
+        { merchant_id: { $regex: getRegExp(search) } },
+        { terminal_id: { $regex: getRegExp(search) } },
+        { serial_no: { $regex: getRegExp(search) } },
+        { assigned_phone: { $regex: getRegExp(search) } },
+      ];
+    }
+
+    const $project = {
+      terminal_id: 1,
+      assigned_phone: 1,
+      software_version: 1,
+      serial_no: 1,
+      address_line_one: 1,
+      installed_date: 1,
+      last_connect_date: 1,
+      merchant_id: 1,
+      type: 1,
+      model: 1,
+      network: 1,
+      signal: 1,
+      charging_status: 1,
+      printer_status: 1,
+      battery_level: 1,
+      geo_address: 1,
+      lat: 1,
+      lon: 1,
+      active: 1,
+    };
+
+    let terminals = await TerminalConfig.aggregate([
+      { $match: filter },
+      { $sort: { lon: -1 } },
+      { $skip: offset },
+      { $limit: limit },
+      { $project },
+    ]);
+    
+    const activeTime = 50*1000;
+
+    const data = terminals.map((item) => {
+      item.active = new Date().getTime() - new Date(item.last_connect_date).getTime() < activeTime * 1000;
+      return item;
+    });
+
+    return { rows: data };
+  }
+
+
+  /**
+   * Creates new terminals given single or array of terminals
+   * @param {*} data - Array or Objct
+   */
+   async create(data) {
+    const isSingle = !Array.isArray(data);
+    try {
+      if (isSingle && data.terminal_id) await TerminalConfig.updateOne({ terminal_id: data.terminal_id }, data, { upsert: true });
+      else await TerminalConfig.insertMany(isSingle ? [data] : data, { ordered: false, rawResult: true });
+    } catch (error) {
+      console.log(error.message);
+    }
+    if (!isSingle || !data.terminal_id) return true;
+
+    const record = await this.getTerminal(data.terminal_id);
+    return record;
+  }
+
+
+
+  async getMerchantTIDs(merchant_id, onlyID = true) {
+    const merchIDs = Array.isArray(merchant_id) ? merchant_id : [merchant_id];
+    let terminals:any = await TerminalConfig.find({ ...this.match, merchantId: { $in: merchIDs } }).select('terminalId');
+    if (onlyID) return terminals.map(item => item.terminal_id);
+    return terminals;
+  }
 }
 
 

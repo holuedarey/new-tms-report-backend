@@ -27,6 +27,12 @@ class ApiResponse {
         });
     }
 
+    validationError(res, fields = {}, isConflict = false) {
+        return this.send(res, isConflict ? apiStatusCodes.conflict : apiStatusCodes.badRequest, '',{
+          error: 'Validation errors.',
+          fields,
+        });
+      }
     error(res: Response, code: number, error: any = {}, message: string, ) {
         Logger.log(error);
         if (code === parseInt('444')) {

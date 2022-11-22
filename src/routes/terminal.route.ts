@@ -9,23 +9,18 @@ import { assignTerminaToWallet } from '../middlewares/validators/schemas/termina
 import { extractCSVData } from '../middlewares/csvupload.middleware';
 import Utils from '../helpers/utils';
 import { upload } from '../middlewares/upload.middleware';
+import TerminalV2Controller from '../controller/terminal.v2.controller';
 
 const terminalRoute = express.Router();
 const singleUploader = Utils.multerTempUploadHandler().single('file');
 
 
 
-terminalRoute.get('/detailsbyterminalId/:terminalId',
-    verifyToken,
-    terminalController.getTerminalByTerminalId);
+terminalRoute.get('/detailsbyterminalId/:terminalId', verifyToken, terminalController.getTerminalByTerminalId);
 
-terminalRoute.get('/detailsbySerialNumber/:serialNumber',
-    verifyToken,
-    terminalController.getTerminalBySerialNumber);
+terminalRoute.get('/detailsbySerialNumber/:serialNumber', verifyToken, terminalController.getTerminalBySerialNumber);
 
-terminalRoute.get('/inactive-active/:merchantCode',
-    verifyToken,
-    terminalController.getActiveAndInactiveSummaryByMerchantCodeandWalletId);
+terminalRoute.get('/inactive-active/:merchantCode', verifyToken, terminalController.getActiveAndInactiveSummaryByMerchantCodeandWalletId);
 
 
 terminalRoute.get('/getTerminals/:merchantCode',
@@ -89,5 +84,19 @@ terminalRoute.get('/update-list', verifyToken, terminalController.getTerminalSof
 terminalRoute.get('/update/:brand/:model/:current_version/:serial_number', validateStaticAuthorizationHeader, terminalController.checkTerminalUpdateAvailability);
 
 terminalRoute.get('/download/:file', terminalController.downloadUpdate)
+
+
+
+// terminalRoute.post('/upload-file', TerminalV2Controller.uploadFile);
+terminalRoute.post('/assign', TerminalV2Controller.assignTid);
+
+terminalRoute.post('/onboard',  TerminalV2Controller.onBoard);
+terminalRoute.get('/onboard', TerminalV2Controller.inventory);
+terminalRoute.get('/count', TerminalV2Controller.getCount);
+terminalRoute.get('/stats', TerminalV2Controller.getStats);
+terminalRoute.get('/', TerminalV2Controller.getAll);
+terminalRoute.get('/view/:terminalId', TerminalV2Controller.getState);
+terminalRoute.get('/chart', TerminalV2Controller.statChart);
+
 
 export default terminalRoute;

@@ -272,6 +272,6 @@ const permission = (accessLevel) => (req, res, next) => {
 
 export {
     permission, validateUser, validateUserExist, validateRequest, validateStaticAuthorization, validateAssignTerminalRequest,
-    verifyToken, validateCreateUserRequest, validateStaticAuthorizationHeader
+    verifyToken, validateCreateUserRequest, validateStaticAuthorizationHeader, getUserFromToken
 }
 

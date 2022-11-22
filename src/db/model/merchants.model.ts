@@ -17,4 +17,4 @@
  }, { timestamps: true });
 
 
-export default mongoose.model('Merchant', merchantsSchema);
+export default mongoose.model('Merchants', merchantsSchema);

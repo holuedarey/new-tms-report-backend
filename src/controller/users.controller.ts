@@ -192,7 +192,7 @@ class UserController {
 
    }
 
-   public async addUserToRole(request: Request, response: Response) {
+   public async addUserToRole(request: any, response: Response) {
 
       try {
 
@@ -234,7 +234,7 @@ class UserController {
    }
 
 
-   public async removeUserRole(request: Request, response: Response) {
+   public async removeUserRole(request: any, response: Response) {
 
       try {
 
