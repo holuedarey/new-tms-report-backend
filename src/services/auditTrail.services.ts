@@ -100,7 +100,6 @@ class AuditTrailService {
       const $or = [];
       $or.push(getSObj('auditActivity'));
       $or.push(getSObj('auditType'));
-      $or.push(getSObj('disputeId'));
       $or.push(getSObj('description'));
       $or.push(getSObj(`user.name`));
       $or.push(getSObj(`user.role`));

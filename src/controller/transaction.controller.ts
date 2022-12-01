@@ -6,7 +6,7 @@ import express from 'express';
 // import { Worker } from 'webworker-threads';
 import TransactionService from '../services/transaction.services';
 import ApiResponse from "../helpers/apiResponse";
-import { apiStatusCodes  } from "../helpers/constants";
+import { apiStatusCodes } from "../helpers/constants";
 import TerminalService from '../services/terminal.services';
 import { curDate, validateMongoID, getPrevStartEndDate } from '../helpers/util';
 // import MerchantService from '../database/services/MerchantService';
@@ -28,7 +28,7 @@ class TransactionController {
     } = req.query;
 
     const { user } = req;
-    
+
     const transServ = new TransactionService();
     transServ.setPage(page)
       .setLimit(limit)
@@ -44,7 +44,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: transactions,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -74,7 +74,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: transactions,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   async cardTransactionHistoryV2(req, res) {
@@ -94,10 +94,10 @@ class TransactionController {
 
     try {
       let transactions = await transServ.vasHistory();
-      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully',{
+      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: transactions,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -138,7 +138,7 @@ class TransactionController {
 
       if (!transaction) {
         ApiResponse.send(res, apiStatusCodes.created, '', {
-          data: {message: `No record found for this rrn ${rrn}`},
+          data: { message: `No record found for this rrn ${rrn}` },
         });
       }
       else {
@@ -148,7 +148,7 @@ class TransactionController {
         });
       }
 
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -168,10 +168,10 @@ class TransactionController {
       transServ.setDate(date || curDate()).setMerchant(null);
 
       const data = await transServ.time(range, date || curDate());
-      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully',{
+      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -193,7 +193,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: stats,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
 
@@ -216,7 +216,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: stats,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
 
@@ -243,10 +243,10 @@ class TransactionController {
     try {
       const reasons = await transServ.failureReason();
 
-      ApiResponse.send(res, apiStatusCodes.success,'', {
+      ApiResponse.send(res, apiStatusCodes.success, '', {
         data: reasons,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -301,7 +301,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data, summary,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -354,7 +354,7 @@ class TransactionController {
   async getReceipt(req, res) {
     const { id } = req.params;
     if (!validateMongoID(id)) {
-      return ApiResponse.send(res, apiStatusCodes.notFound,'', {
+      return ApiResponse.send(res, apiStatusCodes.notFound, '', {
         error: 'Transaction not found.',
       });
     }
@@ -368,27 +368,28 @@ class TransactionController {
         merchant_id: `$${transMod.getField('merchant_id')}`,
         merchant_name: `$${transMod.getField('merchant_name')}`,
         rrn: `$${transMod.getField('rrn')}`,
-        prrn: `$${transMod.getField('prrn')}`,
+        online_pin: `$onlinePin`,
+        transaction_type: `$transactionType`,
+        merchant_category_code: `$merchantCategoryCode`,
+        processing_code: '$processingCode',
+        card_expiry: '$cardExpiry',
+        message_reason: '$messageReason',
+        recievable_amount: { $multiply: ["$amount", 0.05] },
+        currency_code: `$${transMod.getField('currency_code')}`,
         pan: `$${transMod.getField('pan')}`,
         authcode: `$${transMod.getField('authcode')}`,
         stan: `$${transMod.getField('stan')}`,
         response_msg: `$${transMod.getField('response_msg')}`,
         response_code: `$${transMod.getField('response_code')}`,
-        country_code: `$${transMod.getField('country_code')}`,
-        country_a2code: `$${transMod.getField('country_a2code')}`,
-        currency_code: `$${transMod.getField('currency_code')}`,
-        currency_symbol: `$${transMod.getField('currency_symbol')}`,
         bin: `$${transMod.getField('bin')}`,
-        settled: `$settled`,
         panNo: { $substr: [`$${transMod.getField("pan")}`, 0, 6] },
         services: `$vasData.body.service`,
         processor: `$handlerUsed`,
         vTid: `$vasData.card.vTid`,
-        wallet: `$vasData.wallet`,
         customerRef: "$customerRef",
       };
 
-      const transactions:any = await Journals.aggregate([
+      const transactions: any = await Journals.aggregate([
         { $match: { MTI: '0200', _id: new ObjectID(id) } },
         { $project },
       ]);
@@ -404,26 +405,26 @@ class TransactionController {
       // const data = await VasReportService.getTransReceiptData(trans.rrn, trans.terminal_id);
 
       const trans = transactions[0];
-      return ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully',{
+      return ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: {
           ...trans,
-          transaction_data: {
-            // merchantName: merch.merchant_name || trans.merchant_name,
-            // merchant_address: merch.merchant_address,
-            amount: transactions.amount,
-            date: trans.trans_date,
-            mPan: trans.pan,
-            mid: trans.merchant_id,
-            tid: trans.terminal_id,
-            rrn: trans.rrn,
-            stan: trans.stan,
-            error: trans.status_code !== '00',
-            message: trans.status,
-            // ...data,
-          },
+          // transaction_data: {
+          //   // merchantName: merch.merchant_name || trans.merchant_name,
+          //   // merchant_address: merch.merchant_address,
+          //   amount: transactions.amount,
+          //   date: trans.trans_date,
+          //   mPan: trans.pan,
+          //   mid: trans.merchant_id,
+          //   tid: trans.terminal_id,
+          //   rrn: trans.rrn,
+          //   stan: trans.stan,
+          //   error: trans.status_code !== '00',
+          //   message: trans.status,
+          //   // ...data,
+          // },
         },
       });
-    } catch (error) { return ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { return ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
 
@@ -470,10 +471,10 @@ class TransactionController {
       });
       await trans.save();
 
-      ApiResponse.send(res, apiStatusCodes.success,'Retrived Successfully', {
+      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         message: 'Successful',
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -482,7 +483,7 @@ class TransactionController {
   * @param {express.Response} res Express response param
   */
 
-   async banksAndCardSchemesSummary(req, res) {
+  async banksAndCardSchemesSummary(req, res) {
     const {
       startdate, date, enddate
     } = req.query;
@@ -495,7 +496,7 @@ class TransactionController {
       ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: stats,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 
   /**
@@ -503,7 +504,7 @@ class TransactionController {
   * @param {express.Request} req Express request param
   * @param {express.Response} res Express response param
   */
-   async downloadJournal(req, res) {
+  async downloadJournal(req, res) {
     const {
       enddate, startdate, page, limit, merchant, terminal, status, search, source,
     } = req.query;
@@ -529,7 +530,7 @@ class TransactionController {
       console.log("counting ", data)
       if (!data) {
         console.log("counting ", data)
-        ApiResponse.send(res, apiStatusCodes.success,'Retrived Successfully', {
+        ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
           data: "No record Found",
         });
       }
@@ -537,10 +538,10 @@ class TransactionController {
 
       // const transactions = await transServ.download();
       const file = await transServ.generateReportTlm(data.total, data.filename);
-      ApiResponse.send(res, apiStatusCodes.success,'Retrived Successfully', {
+      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
         data: `${process.env.API_URL}/files/${file}`,
       });
-    } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
 }
 

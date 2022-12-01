@@ -13,6 +13,7 @@ let usersSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    emailtoken:String,
     phoneNumber : {
         type : String,
         required : true

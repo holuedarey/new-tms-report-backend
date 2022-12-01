@@ -242,18 +242,20 @@ class TransactionService {
       merchant_id: `$${transMod.getField('merchant_id')}`,
       merchant_name: `$${transMod.getField('merchant_name')}`,
       rrn: `$${transMod.getField('rrn')}`,
-      prrn: `$${transMod.getField('prrn')}`,
+      online_pin: `$onlinePin`,
+      transaction_type: `$transactionType`,
+      merchant_category_code:  `$merchantCategoryCode`,
+      processing_code: '$processingCode',
+      card_expiry: '$cardExpiry',
+      message_reason : '$messageReason',
+      recievable_amount: { $multiply: [ "$amount", 0.05] },
+      currency_code: `$${transMod.getField('currency_code')}`,
       pan: `$${transMod.getField('pan')}`,
       authcode: `$${transMod.getField('authcode')}`,
       stan: `$${transMod.getField('stan')}`,
       response_msg: `$${transMod.getField('response_msg')}`,
       response_code: `$${transMod.getField('response_code')}`,
-      country_code: `$${transMod.getField('country_code')}`,
-      country_a2code: `$${transMod.getField('country_a2code')}`,
-      currency_code: `$${transMod.getField('currency_code')}`,
-      currency_symbol: `$${transMod.getField('currency_symbol')}`,
       bin: `$${transMod.getField('bin')}`,
-      settled: `$settled`,
       panNo: { $substr: [`$${transMod.getField("pan")}`, 0, 6] },
       services: `$vasData.body.service`,
       processor: `$handlerUsed`,
@@ -268,7 +270,7 @@ class TransactionService {
       { $sort },
       { $skip: this.$skip },
       { $limit: this.$limit },
-      { $project },
+      { $project}
     ]);
     transactions.map((item) => {
       item.transaction_date = moment(item.transaction_date).add(1, 'hours');
@@ -324,7 +326,7 @@ class TransactionService {
 
 
   async time(range = 'y', startdate,) {
-    console.log('coming date : ', startdate)
+    console.log('coming date : ', range)
     const ranges = {
       d: 'hour',
       w: 'dayOfMonth',
@@ -940,7 +942,6 @@ class TransactionService {
       country_code: `$${transMod.getField('country_code')}`,
       country_a2code: `$${transMod.getField('country_a2code')}`,
       currency_code: `$${transMod.getField('currency_code')}`,
-      currency_symbol: `$${transMod.getField('currency_symbol')}`,
       bin: `$${transMod.getField('bin')}`,
       settled: `$settled`,
       panNo: { $substr: [`$${transMod.getField('pan')}`, 0, 6] },

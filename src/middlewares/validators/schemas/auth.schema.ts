@@ -7,6 +7,19 @@ const signInSchema = Joi.object(
         "password": Joi.string().required(),
     });
 
+const forgetPasswordSchema = Joi.object(
+    {
+        "email": Joi.string().required(),
+    });
+
+const resetPasswordSchema = Joi.object(
+    {
+        "email": Joi.string().required(),
+        "password": Joi.string().required(),
+        "token": Joi.string().required(),
+
+    });
+
 
 const changeRoleSchema = Joi.object(
     {
@@ -35,5 +48,5 @@ const createUserBulk = Joi.array().items(createUserSchema);
 
 
 
-export { createUserBulk, createUserSchema, signInSchema, changeRoleSchema, activateDeactivateSchema };
+export { createUserBulk, createUserSchema, signInSchema, changeRoleSchema, activateDeactivateSchema, resetPasswordSchema, forgetPasswordSchema };
 
