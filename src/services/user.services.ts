@@ -235,6 +235,7 @@ class UserServices {
                     roles: "$roles",
                     permissions: "$permissions",
                     isApproved: 1,
+                    createdAt:1,
                     _id: 1,
 
                 }
