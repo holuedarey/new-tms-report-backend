@@ -156,6 +156,7 @@ protected matchApproved;
     const count = await Merchant.countDocuments(filter);
     return count;
   }
+ 
 }
 
 export default new MerchantService();

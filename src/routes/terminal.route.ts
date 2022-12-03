@@ -95,8 +95,15 @@ terminalRoute.get('/onboard', TerminalV2Controller.inventory);
 terminalRoute.get('/count', TerminalV2Controller.getCount);
 terminalRoute.get('/stats', TerminalV2Controller.getStats);
 terminalRoute.get('/', TerminalV2Controller.getAll);
+terminalRoute.get('/geolocation', TerminalV2Controller.getMaps);
 terminalRoute.get('/view/:terminalId', TerminalV2Controller.getState);
 terminalRoute.get('/chart', TerminalV2Controller.statChart);
+
+terminalRoute.get('/printer',TerminalV2Controller.printerStat)
+terminalRoute.get('/battery-network',TerminalV2Controller.netBatStat)
+terminalRoute.get('/download', TerminalV2Controller.downloadTerminal);
+terminalRoute.get('/grouping-report/:type', TerminalV2Controller.terminalGroupingReport);
+
 
 
 export default terminalRoute;

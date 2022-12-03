@@ -311,58 +311,58 @@ class MerchantController {
   * @param {express.Request} req Express request param
   * @param {express.Response} res Express response param
   */
-  // async terminalPerformance(req, res) {
-  //   const startDate = req.query.date || req.query.startdate || curDate();
-  //   const endDate = req.query.enddate || startDate;
+  async terminalPerformance(req, res) {
+    const startDate = req.query.date || req.query.startdate || curDate();
+    const endDate = req.query.enddate || startDate;
 
-  //   const { user } = req;
-  //   const { merchant_id = req.params.mid } = user;
+    const { user } = req;
+    const { merchant_id = req.params.mid } = user;
 
-  //   const {
-  //     sort, dir, page, limit,
-  //   } = req.query;
+    const {
+      sort, dir, page, limit,
+    } = req.query;
 
-  //   const sortParams = {
-  //     value: 'trans_value',
-  //     volume: 'trans_volume',
-  //     activeterm: 'active_terminals',
-  //   };
+    const sortParams = {
+      value: 'trans_value',
+      volume: 'trans_volume',
+      activeterm: 'active_terminals',
+    };
 
-  //   const tranServ = new TransactionService();
-  //   tranServ.setPage(page).setLimit(limit).setMerchant(merchant_id)
-  //     .setDate(startDate, endDate)
-  //     .setSort(sortParams[sort] || 'trans_value', dir)
-  //     .setPage(page)
-  //     .setLimit(limit);
+    const tranServ = new TransactionService();
+    tranServ.setPage(page).setLimit(limit).setMerchant(merchant_id)
+      .setDate(startDate, endDate)
+      .setSort(sortParams[sort] || 'trans_value', dir)
+      .setPage(page)
+      .setLimit(limit);
 
-  //   const prevDate = getPrevStartEndDate(startDate, endDate);
-  //   const prevStartDate = prevDate.start;
-  //   const prevEndDate = prevDate.end;
+    const prevDate:any = getPrevStartEndDate(startDate, endDate);
+    const prevStartDate = prevDate.start;
+    const prevEndDate = prevDate.end;
 
-  //   try {
-  //     const transData = await tranServ.performance('terminal');
-  //     const { transactions, summary } = transData;
+    try {
+      const transData:any = await tranServ.performance('terminal');
+      // const { transactions, summary } = transData;
 
-  //     const tids = transactions.map(item => item.terminal_id);
+      // const tids = transDatan.transactions.map(item => item.terminal_id);
 
-  //     tranServ.setDate(prevStartDate, prevEndDate).setTerminal(tids);
-  //     const prevTransData = await tranServ.performance('terminal');
-  //     const { transactions: prevTransactions } = prevTransData;
+      // tranServ.setDate(prevStartDate, prevEndDate).setTerminal(tids);
+      // const prevTransData = await tranServ.performance('terminal');
+      // // const { transactions: prevTransactions } = prevTransData;
 
-  //     const data = transactions.map((item) => {
-  //       const prevTran = prevTransactions.find(rec => rec.terminal_id === item.terminal_id) || {};
-  //       item.value_change = (item.trans_value || 0) - (prevTran.trans_value || 0);
-  //       item.volume_change = (item.trans_volume || 0) - (prevTran.trans_volume || 0);
-  //       return item;
-  //     });
+      // const data = transData.transactions.map((item) => {
+      //   const prevTran = prevTransDatan.prevTransactions.find(rec => rec.terminal_id === item.terminal_id) || {};
+      //   item.value_change = (item.trans_value || 0) - (prevTran.trans_value || 0);
+      //   item.volume_change = (item.trans_volume || 0) - (prevTran.trans_volume || 0);
+      //   return item;
+      // });
 
-  //     ApiResponse.send(res, apiStatusCodes.success, '',{
-  //       data: data.rows || data,
-  //       summary,
-  //       merchant_id,
-  //     });
-  //   } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
-  // }
+      // ApiResponse.send(res, apiStatusCodes.success, '',{
+      //   data: data.rows || data,
+      //   transData.summary,
+      //   merchant_id,
+      // });
+    } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
+  }
 
 
   /**

@@ -10,8 +10,9 @@ import MerchantModel from "../db/model/merchantSummary.model";
 import TransactionServices from "./transaction.services";
 import UpdateModel from "../db/model/remote.update"
 import { ITerminal, IUpdate } from "../interfaces/db.models";
-import path from 'path'
-import { checkNumber, generateFilename, getReportHeaders, removeFile, curDate, getRegExp, binConverter } from "../helpers/util";
+import path from 'path';
+import ExcelJS from 'exceljs';
+import { getTerminalHeaders, checkNumber, generateFilename, getReportHeaders, removeFile, curDate, getRegExp, binConverter, generateFilenameTerminal } from "../helpers/util";
 
 
 interface ITerminalServices {
@@ -1314,7 +1315,7 @@ class TerminalServices implements ITerminalServices {
       { $sort: { lon: -1 } },
       { $skip: offset },
       { $limit: limit },
-      { $project },
+      // { $project },
     ]);
     
     const activeTime = 50*1000;
@@ -1354,6 +1355,79 @@ class TerminalServices implements ITerminalServices {
     if (onlyID) return terminals.map(item => item.terminal_id);
     return terminals;
   }
+
+  async termMaps() {
+    const data = await TerminalConfig.find({ lon: { $ne: null }, ...this.match }).select('terminal_id lon lat geo_address');
+    return data;
+  }
+
+
+  async getQueryTotalForDownload() {
+    let total = await TerminalConfig.aggregate([
+      { $match: this.match },
+      {
+        $group: {
+          _id: 0,
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    const count = total[0].count;
+    console.log("count :", count)
+
+    if (count > 0) {
+      let filename = await generateFilenameTerminal();
+      process.env.gen_files = (process.env.gen_files || "") + filename + ","
+
+      return { total: count, filename: filename }
+    }
+    return false;
+  }
+
+  async generateReportTlm(total = 0, filename = "") {
+    let filePath = `files/${filename}`;
+    let workbook = new ExcelJS.stream.xlsx.WorkbookWriter({ filename: filePath, useStyles: true, useSharedStrings: true });
+    workbook.creator = "Bizzdesk System";
+
+    let workSheet:any = workbook.addWorksheet("Terminal Export");
+    workSheet.columns = getTerminalHeaders();
+    console.log("total", total)
+    let pages = Math.ceil((total + 5000) / 5000);
+
+    let index = 0;
+
+    try {
+      while (index != pages) {
+        let txn = await TerminalConfig.aggregate([
+          { $match: this.match },
+          { $skip: index * 5000 },
+          { $limit: 5000 },
+        ]);
+        // find({}).skip(index * 5000).limit(5000);
+        console.log("index " + index + " pages : " + pages);
+        if (txn.length) {
+          txn.map(t => {
+            workSheet.addRow(t).commit();
+          })
+        }
+
+        index += 1;
+      }
+      await workbook.commit();
+      console.log("done");
+    } catch (error) {
+      console.error(`error generating report ${filename}, err: ${error}`);
+    } finally {
+      console.log("clean");
+      let gen_file = process.env.gen_files;
+      gen_file = gen_file.replace(filename + ",", "");
+      process.env.gen_files = gen_file;
+    }
+
+    removeFile(filePath);
+    return filename;
+  }
+
 }
 
 

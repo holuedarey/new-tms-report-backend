@@ -28,11 +28,7 @@ indexRoutes.use('/users', userRoute);
 indexRoutes.use('/auth', authRoute);
 indexRoutes.use('/audit-trail', auditRoute);
 
-indexRoutes.get('/event', (req, res) => {
-    const event  = new AuditEvent();
-    event.emit('complete', "aduitPayload")
-    return Response.send(res, codes.success, "ok")
-});
+
 indexRoutes.get('/', (req, res) => Response.send(res, codes.success, 'This app is running.'));
 
 indexRoutes.get('*', (req, res) => Response.send(res, codes.notFound, 'Endpoint not found.'));

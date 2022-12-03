@@ -158,6 +158,20 @@ const generateFilename = async ()=> {
   return filename;
 }
 
+const generateFilenameTerminal = async () => {
+  let date = new Date();
+
+  let filename = `Terminal-${date.getTime().toString()}.xlsx`;
+
+  let filesPath = `files/${filename}`;
+  let pathDir = path.dirname(filesPath);
+  if (fs.existsSync(pathDir) == false) {
+    fs.mkdirSync(pathDir);
+  }
+
+  return filename;
+}
+
 const getReportHeaders = () => {
   let fields = [
     "handlerUsed",
@@ -217,9 +231,36 @@ const hasAdminRole = user => hasRole(user, 'admin') || hasRole(user, 'super' );
   };
 };
 
+
+const getTerminalHeaders = () => {
+  let fields = [
+    "handlerUsed",
+    "rrn",
+    "merchantName",
+    "merchantAddress",
+    "merchantId",
+    "terminalId",
+    "STAN",
+    "transactionTime",
+    "handlerResponseTime",
+    "merchantCategoryCode",
+    "MTI",
+    "maskedPan",
+    "processingCode",
+    "amount",
+    "customerRef",
+    "messageReason",
+    "responseCode",
+    "authCode",
+  ];
+
+  return fields.map((f) => {
+    return { header: f, key: f, width: 10 };
+  });
+}
 export {
   getPrevStartEndDate, getDbName, curDate, validateDate, excelDateConverter, getRegExp, validateEmail,
   validateMongoID, validateFile, arraysEqual, hasRole, hasAdminRole, checkNumber,
-  countUnique, arraysNoCaseEqual, binConverter, getCardType, generateFilename,
-  getReportHeaders, removeFile,
+  countUnique, arraysNoCaseEqual, binConverter, getCardType, generateFilename,generateFilenameTerminal,
+  getReportHeaders, removeFile,getTerminalHeaders
 };
