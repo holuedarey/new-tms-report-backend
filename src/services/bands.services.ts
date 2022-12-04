@@ -3,7 +3,7 @@ import BandsModel from '../db/model/bands.model';
 import moment from 'moment-timezone';
 import Util from '../helpers/utils';
 import MerchantSummary from '../db/model/merchantSummary.model';
-import MerchantModel from '../db/model/merchants.model';
+import Merchant from '../db/model/merchant.model';
 import { threshold, weekThreshold, dateGroup} from '../helpers/constants';
 
 
@@ -618,7 +618,7 @@ class BandsServices {
      * @param {*} terminals 
      */
     public async appendMerchantInfo(terminals: any[]){
-        let merchantInfo = await MerchantModel.aggregate([
+        let merchantInfo = await Merchant.aggregate([
             {$match : {terminals : {$in : terminals.map((tm: any)=>{return tm.terminalId})}}}
         ]).allowDiskUse(true).read("secondary");
 
