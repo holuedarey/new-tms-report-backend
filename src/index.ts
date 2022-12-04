@@ -18,11 +18,11 @@ const port = process.env.PORT || '8000';
 
 
 const httpServer = http.createServer(app);
-const httpsServer = https.createServer({
-  key: fs.readFileSync(path.resolve('./src/ssl/paysure_ng.key')),
-  cert: fs.readFileSync(path.resolve('./src/ssl/paysure_ng.crt')),
-  passphrase: 'paySureNg',
-}, app);
+// const httpsServer = https.createServer({
+//   key: fs.readFileSync(path.resolve('./src/ssl/paysure_ng.key')),
+//   cert: fs.readFileSync(path.resolve('./src/ssl/paysure_ng.crt')),
+//   passphrase: 'paySureNg',
+// }, app);
 
 /** connection mongodb */
 mongoose.Promise = global.Promise;
@@ -76,16 +76,16 @@ app.use(morgan(':date *** :method :: :url ** :response-time'));
 app.use('/api/v1', Routes);
 
 /** Use SSL socket on production */
-if (process.env.USE_SSL) {
-  httpsServer.listen(port, () => {
-    Logger.log(`Secure server running on port: ${port}`);
-  });
-} else {
-  httpServer.listen(port, () => {
-    Logger.log(`app running on http://localhost:${port}`);
-  });
-}
-// app.listen(port, () => {
-//   // if (err) return console.error(err);
-//   return console.log(`Server Magic happening on port ${port}`);
-// });
+// if (process.env.USE_SSL) {
+//   httpsServer.listen(port, () => {
+//     Logger.log(`Secure server running on port: ${port}`);
+//   });
+// } else {
+//   httpServer.listen(port, () => {
+//     Logger.log(`app running on http://localhost:${port}`);
+//   });
+// }
+app.listen(port, () => {
+  // if (err) return console.error(err);
+  return console.log(`Server Magic happening on port ${port}`);
+});
