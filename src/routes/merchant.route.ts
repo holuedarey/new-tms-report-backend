@@ -1,7 +1,7 @@
 import express from 'express';
 import { validateRequest } from '../middlewares/validators/requestValidator';
 import MerchantController from '../controller/merchant.conmtroller';
-import { assignMerchants } from '../middlewares/validators/schemas/merchant.schema';
+import  assignMerchants  from '../middlewares/validators/schemas/merchant.schema';
 
 /**
  * Routes of '/merchnants'
