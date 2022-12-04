@@ -9,6 +9,9 @@ import Merchant from '../db/model/merchant.model';
 // import { getUserPosVal } from '../database/mongodb/models/User';
 import {validateDate, curDate, getRegExp, validateMongoID, checkNumber,getPrevStartEndDate} from '../helpers/util';
 import TransactionService from '../services/transaction.services';
+import { AuditEventResources } from '../db/model/audit.model';
+import { AuditActionResources } from '../db/model/audit.model';
+import AuditEvent from '../events/audits.events';
 
 /**
 * Merchant Controller
@@ -24,7 +27,7 @@ class MerchantController {
       const itemCount = await MerchantService.getAllCount(req.query.search);
 
       ApiResponse.send(res, apiStatusCodes.success, '', {
-        data: { itemCount },
+        itemCount ,
       });
     } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null);  }
   }
@@ -55,183 +58,83 @@ class MerchantController {
     } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
 
-  async setDataOnBoard(req, res) {
-    const { user = {} } = req;
-    const { mid, merchant_id, mcc } = req.body;
-
-    let apprLevel = 0;
-    apprLevel = apprLevel < 0 ? 0 : apprLevel;
-
-    if (apprLevel < 5) {
-      return ApiResponse.send(res, apiStatusCodes.forbidden, '', {
-        message: 'You are not permitted to do this.',
-      });
-    }
-
-    if (!mcc && !merchant_id) {
-      return ApiResponse.validationError(res, { merchant_id: 'Merchant ID or MCC is required.' });
-    }
-
-    const filter = {
-      _id: mid,
-      $and: [
-        { approved: false },
-        { approval_level: { $gte: apprLevel - 1 } },
-      ],
-    };
-
-    const merchant:any = await Merchant.findOne(filter);
-    if (!merchant) {
-      return ApiResponse.send(res, apiStatusCodes.notFound, '', {
-        error: 'Merchant could not be found.',
-      });
-    }
-    if (merchant_id) merchant.merchant_id = merchant_id;
-    if (mcc) merchant.mcc = mcc;
-    await merchant.save();
-
-    return ApiResponse.send(res, apiStatusCodes.success,'', {
-      message: 'Data set successfully.',
-    });
-  }
-
-  // async rejectOnBoard(req, res) {
-  //   const { user = {} } = req;
-  //   const { mid } = req.body;
-
-  //   if (!validateMongoID(mid)) {
-  //     return ApiResponse.send(res, apiStatusCodes.notFound, '',{
-  //       error: 'Merchant could not be found.',
-  //     });
-  //   }
-
-  //   let apprLevel = 0;
-  //   apprLevel = apprLevel < 0 ? 0 : apprLevel;
-
-  //   const filter = {
-  //     _id: mid,
-  //     $and: [
-  //       { approved: false },
-  //       { approval_level: { $gte: apprLevel - 1 } },
-  //     ],
-  //   };
-
-  //   try {
-  //     const merchant = await Merchant.findOne(filter);
-  //     if (!merchant) {
-  //       return ApiResponse.send(res, apiStatusCodes.notFound,'', {
-  //         error: 'Merchant could not be found.',
-  //       });
-  //     }
-
-  //     if (merchant.approval_level >= apprLevel) {
-  //       return ApiResponse.send(res, apiStatusCodes.success, '',{
-  //         message: 'This Merchant has already been approved.',
-  //       });
-  //     }
-
-  //     merchant.approval_level = apprLevel - 1;
-  //     await merchant.save();
-
-  //     return ApiResponse.send(res, apiStatusCodes.success, '', {
-  //       message: 'Merchant successfully rejected.',
-  //     });
-  //   } catch (error) { return  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
-  // }
-
-  // async approveOnBoard(req, res) {
-  //   const { user = {} } = req;
-  //   const { mid } = req.body;
-
-  //   if (!validateMongoID(mid)) {
-  //     return ApiResponse.send(res, apiStatusCodes.notFound,'', {
-  //       error: 'Merchant could not be found.',
-  //     });
-  //   }
-
-  //   let apprLevel = 0;
-  //   apprLevel = apprLevel < 0 ? 0 : apprLevel;
-
-  //   const filter = {
-  //     _id: mid,
-  //     $and: [
-  //       { approved: false },
-  //       { approval_level: { $gte: apprLevel - 1 } },
-  //     ],
-  //   };
-
-  //   try {
-  //     const merchant:any = await Merchant.findOne(filter);
-  //     if (!merchant) {
-  //       return ApiResponse.send(res, apiStatusCodes.notFound, '',{
-  //         error: 'Merchant could not be found.',
-  //       });
-  //     }
-
-  //     if (merchant.approval_level >= apprLevel) {
-  //       return ApiResponse.send(res, apiStatusCodes.success,'', {
-  //         message: 'This Merchant has already been approved.',
-  //       });
-  //     }
-
-  //     merchant.approval_level = apprLevel;
-  //     await merchant.save();
-
-  //     return ApiResponse.send(res, apiStatusCodes.success, '',{
-  //       message: 'Merchant successfully approved.',
-  //     });
-  //   } catch (error) { return  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
-  // }
-
-  async onBoard(req, res) {
-    const {
-      merchant_name, rc_number, merchant_address, merchant_email, merchant_phone, business_industry, merchant_contacts, merchant_description, terminals, terminals_count, merchant_account_name, merchant_account_nr, merchant_account_type, bank_branch: merchant_bank_branch, opening_hours, price_ranges,
-    } = req.body;
-
-    const { user = {} } = req;
-
-    const merchant:any = {
-      merchant_name, rc_number, merchant_address, merchant_email, business_industry, merchant_contacts, terminals, merchant_description, terminals_count, merchant_account_name, merchant_account_nr, merchant_account_type, merchant_bank_branch, merchant_phone, opening_hours, price_ranges, merchant_contact: merchant_contacts[0].contact_name,
-    };
-
-    merchant.bank_branch = user.bank_branch;
-    merchant.approved_by = [{
-      id: user._id,
-      name: `${user.firstname} ${user.lastname}`,
-      role: user.roles,
-      approval_level: 0,
-    }];
-    merchant.approved = false;
-    merchant.approval_level = 0;
+  async activateDeactvateMerchant(req, res) {
 
     try {
-      const merch = new Merchant(merchant);
-      await merch.save();
 
-      ApiResponse.send(res, apiStatusCodes.success, '',{
-        data: merch,
-        message: 'Merchants added successfully',
+       const { merchantCode } = req.params;
+
+       const merchant:any = await Merchant.findOne({ merchantCode });
+       if (!merchant) {
+         return ApiResponse.send(res, apiStatusCodes.notFound, '',{ error: 'Merchant account not found.' });
+       }
+       const activateResponse =  await merchant.update({
+        isApproved: !merchant.isApproved
       });
-    } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
-  }
+       console.log('activateResponse', activateResponse)
+       const messageAction = merchant.isApproved === true ? 'deactivated' : 'activated'
 
-  async onBoard2(req, res) {
+       if (!activateResponse) {
+          return ApiResponse.error(res, apiStatusCodes.badRequest, null, 'Could not activate/deactivate Merchant, invalid Merchant');
+       }
+
+       console.log(activateResponse.isApproved);
+       
+       const ts_hms = new Date().toISOString();
+       const aduitPayload = {
+          auditActivity: AuditEventResources.MerchantView,
+          auditType: AuditActionResources.MerchantActivate,
+          description: `${req.user.emailAddress} ${messageAction} a new merchant with id ${merchantCode} @ ${ts_hms}`,
+          user: {
+             name: req.user.name || "",
+             email: req.user.emailAddress,
+             role: req.user.roles[0] || "",
+          },
+          ipAddress: "IP.address()"
+       }
+       const event = new AuditEvent();
+       event.emit('complete', aduitPayload)
+       return ApiResponse.success(res, apiStatusCodes.success,
+          null,
+          `Merchant was successfully ${messageAction}`);
+
+    } catch (error) {
+
+       return ApiResponse.error(res, apiStatusCodes.serverError, null, error);
+
+    }
+
+ }
+
+  async update(req, res) {
     const {
-      mid, profile_compliance, referral_staff, referral_staff_id, ussd_code, business_occupation_code, pan_account_nr, msc_rate, upper_limit, settlement_cycle,
+      name, email, phoneNumber, account, bank, band
     } = req.body;
 
     try {
-      const merchant = await Merchant.findOne({ _id: mid });
+      const merchant = await Merchant.findOne({ merchantCode: req.params.mid });
       if (!merchant) {
         return ApiResponse.send(res, apiStatusCodes.notFound, '',{ error: 'Merchant account not found.' });
       }
       await merchant.update({
-        profile_compliance, referral_staff, referral_staff_id, ussd_code, business_occupation_code, pan_account_nr, msc_rate, upper_limit, settlement_cycle, approval_level: 1,
+        name, email, phoneNumber, account, bank, band
       });
+      const ts_hms = new Date().toISOString();
+      const aduitPayload = {
+         auditActivity: AuditEventResources.MerchantView,
+         auditType: AuditActionResources.MerchantUpdate,
+         description: `${req.user.emailAddress} updated a new merchant with id ${req.body.merchantCode} @ ${ts_hms}`,
+         user: {
+            name: req.user.name || "",
+            email: req.user.emailAddress,
+            role: req.user.roles[0] || "",
+         },
+         ipAddress: "IP.address()"
+      }
+      const event = new AuditEvent();
+      event.emit('complete', aduitPayload)
       return ApiResponse.send(res, apiStatusCodes.success, '',{
-        data: {
-          message: 'Merchants added successfully',
-        },
+        message: 'Merchants updated successfully',
       });
     } catch (error) { return  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
@@ -241,16 +144,28 @@ class MerchantController {
   * @param {express.Request} req Express request param
   * @param {express.Response} res Express response param
   */
-  async upBoard(req, res) {
-    const { data } = req.body;
-    const merchants = data.map((item) => {
-      item.assigned = false;
-      return item;
-    });
-
+  async createMerchant(req, res) {
+   
     try {
-      await MerchantService.create(merchants);
-
+      const merchant = await Merchant.findOne({ merchantCode: req.body.merchantCode });
+      if (merchant) {
+        return ApiResponse.send(res, apiStatusCodes.notFound, '',{ error: 'Merchant account Already Created.' });
+      }
+      await MerchantService.create(req.body);
+      const ts_hms = new Date().toISOString();
+      const aduitPayload = {
+         auditActivity: AuditEventResources.MerchantView,
+         auditType: AuditActionResources.MerchantCreate,
+         description: `${req.user.emailAddress} created a new merchant with id ${req.body.merchantCode} @ ${ts_hms}`,
+         user: {
+            name: req.user.name || "",
+            email: req.user.emailAddress,
+            role: req.user.roles[0] || "",
+         },
+         ipAddress: "IP.address()"
+      }
+      const event = new AuditEvent();
+      event.emit('complete', aduitPayload)
       ApiResponse.send(res, apiStatusCodes.success,'', {
         message: 'Merchants added successfully.',
       });
@@ -274,9 +189,7 @@ class MerchantController {
     try {
       const merchants = await MerchantService.getMerchants(page, limit, search, mids);
 
-      ApiResponse.send(res, apiStatusCodes.success, '',{
-        data: merchants.rows,
-      });
+      ApiResponse.send(res, apiStatusCodes.success, '', merchants.rows);
     } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
 
@@ -289,10 +202,10 @@ class MerchantController {
     const { mid } = req.params;
 
     const { user = {} } = req;
-    const { merchant_id: loggedInMerch = null } = user;
+    // const { merchant_id: loggedInMerch = null } = user;
 
     try {
-      const merchant = await MerchantService.getMerchant(loggedInMerch || mid);
+      const merchant = await MerchantService.getMerchant(mid);
 
       if (!merchant) {
         return ApiResponse.send(res, apiStatusCodes.notFound,'', {
@@ -341,26 +254,26 @@ class MerchantController {
 
     try {
       const transData:any = await tranServ.performance('terminal');
-      // const { transactions, summary } = transData;
+      
+      const { transactions, summary } = transData;
 
-      // const tids = transDatan.transactions.map(item => item.terminal_id);
+      const tids:any = transData.transactions.map(item => item.terminal_id);
 
-      // tranServ.setDate(prevStartDate, prevEndDate).setTerminal(tids);
-      // const prevTransData = await tranServ.performance('terminal');
-      // // const { transactions: prevTransactions } = prevTransData;
+      tranServ.setDate(prevStartDate, prevEndDate).setTerminal(tids);
+      const prevTransData:any = await tranServ.performance('terminal');
+      const { transactions: prevTransactions } = prevTransData;
 
-      // const data = transData.transactions.map((item) => {
-      //   const prevTran = prevTransDatan.prevTransactions.find(rec => rec.terminal_id === item.terminal_id) || {};
-      //   item.value_change = (item.trans_value || 0) - (prevTran.trans_value || 0);
-      //   item.volume_change = (item.trans_volume || 0) - (prevTran.trans_volume || 0);
-      //   return item;
-      // });
+      const data:any = transData.transactions.map((item) => {
+        const prevTran = prevTransData.prevTransactions.find(rec => rec.terminal_id === item.terminal_id) || {};
+        item.value_change = (item.trans_value || 0) - (prevTran.trans_value || 0);
+        item.volume_change = (item.trans_volume || 0) - (prevTran.trans_volume || 0);
+        return item;
+      });
 
-      // ApiResponse.send(res, apiStatusCodes.success, '',{
-      //   data: data.rows || data,
-      //   transData.summary,
-      //   merchant_id,
-      // });
+      ApiResponse.send(res, apiStatusCodes.success, '',{
+        data: data.rows || data,
+        summary,
+      });
     } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
 

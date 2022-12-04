@@ -7,13 +7,15 @@ import userRoute from './user.route';
 import banksRoute from './banks.route';
 import authRoute from './auth.route';
 import { notificationRoute, regNotificationRoute } from './notification.route';
-import AuditEvent from '../events/audits.events';
 import auditRoute from './audit.route';
+import merchantRouter from './merchant.route';
+import { verifyToken } from '../middlewares/validators/requestValidator';
 
 
 const indexRoutes = express.Router();
 
 indexRoutes.use('/terminal', terminalRoute);
+indexRoutes.use('/merchants', verifyToken, merchantRouter);
 
 indexRoutes.use('/transactions', transactionRoute);
 

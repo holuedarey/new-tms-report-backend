@@ -715,51 +715,51 @@ class TransactionService {
     };
     console.log("group :: ", $group);
 
-    // if (type === "merchant") {
-    //   $group._id = { merchant_id: `$${transMod.getField("merchant_id")}` };
-    //   $group.active_terminals = {
-    //     $addToSet: `$${transMod.getField("terminal_id")}`,
-    //   };
-    //   $group.merchant_name = {
-    //     $first: `$${transMod.getField("merchant_name")}`,
-    //   };
+    if (type === "merchant") {
+      $group._id = { merchant_id: `$${transMod.getField("merchant_id")}` };
+      $group.active_terminals = {
+        $addToSet: `$${transMod.getField("terminal_id")}`,
+      };
+      $group.merchant_name = {
+        $first: `$${transMod.getField("merchant_name")}`,
+      };
 
-    //   $project.merchant_id = "$_id.merchant_id";
-    //   $project.active_terminals = { $size: "$active_terminals" };
-    // } else {
-    //   $group._id = { terminal_id: `$${transMod.getField("terminal_id")}` };
+      $project.merchant_id = "$_id.merchant_id";
+      $project.active_terminals = { $size: "$active_terminals" };
+    } else {
+      $group._id = { terminal_id: `$${transMod.getField("terminal_id")}` };
 
-    //   $project.terminal_id = "$_id.terminal_id";
-    // }
+      $project.terminal_id = "$_id.terminal_id";
+    }
 
-    // const totalGroup:any = {
-    //   _id: null,
-    //   total_volume: { $sum: "$trans_volume" },
-    //   total_value: { $sum: "$trans_value" },
-    // };
+    const totalGroup:any = {
+      _id: null,
+      total_volume: { $sum: "$trans_volume" },
+      total_value: { $sum: "$trans_value" },
+    };
 
-    // const $facet = {
-    //   rows: [{ $skip: this.$skip }, { $limit: this.$limit }],
-    //   total: [{ $group: totalGroup }],
-    // };
+    const $facet:any = {
+      rows: [{ $skip: this.$skip }, { $limit: this.$limit }],
+      total: [{ $group: totalGroup }],
+    };
 
-    // const pipelines = [{ $match: this.$match }, { $group }, { $project }];
+    const pipelines:any = [{ $match: this.$match }, { $group }, { $project }];
 
-    // if (this.$sort) {
-    //   // pipelines.push({ $sort: this.$sort });
-    // }
-    // pipelines.push({ $facet });
+    if (this.$sort) {
+      // pipelines.push({ $sort: this.$sort });
+    }
+    pipelines.push({ $facet });
 
-    // let transData = await this.Transaction.aggregate(pipelines).allowDiskUse(
-    //   true
-    // );
-    // [transData = {}] = transData;
+    let transData = await this.Transaction.aggregate(pipelines).allowDiskUse(
+      true
+    );
+    [transData = {}] = transData;
 
-    // const transactions = transData.rows || [];
-    // const summary = { ...(transData.total || [])[0] };
-    // delete summary._id;
+    const transactions = transData.rows || [];
+    const summary = { ...(transData.total || [])[0] };
+    delete summary._id;
 
-    // return { transactions, summary };
+    return { transactions, summary };
   }
 
   /**

@@ -1428,6 +1428,10 @@ class TerminalServices implements ITerminalServices {
     return filename;
   }
 
+  groupingTerminal(){
+    
+  }
+
 }
 
 

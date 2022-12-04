@@ -1,20 +1,19 @@
 
- import mongoose from 'mongoose';
+//  import mongoose from 'mongoose';
 
- let merchantsSchema = new mongoose.Schema({
-     merchant_id: {
-         type: String,
-         required: true
-     },
-     merchant_name: String,
-     merchant_phone: String,
-     merchant_email: String,
-     merchant_contact: String,
-     merchant_address: String,
-     merchant_account_nr: String,
-     terminals: Array,
-     enabled: { type: Boolean, default: true }
- }, { timestamps: true });
+//  let merchantsSchema = new mongoose.Schema({  
+//      name: String,
+//      enabled:String,
+//      email: String,
+//      phloneNumber: String,
+//      account: String,
+//      bank: String,
+//      band: String,
+//      logoUrl: String,
+//      supportStaff: String,
+//      merchantcode: String,
+//      isApproved: { type: Boolean, default: false }
+//  }, { timestamps: true });
 
 
-export default mongoose.model('Merchants', merchantsSchema);
+// export default mongoose.model('Merchant', merchantsSchema);

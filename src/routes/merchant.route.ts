@@ -1,8 +1,7 @@
 import express from 'express';
-// import validateInputs2 from 'json-request-validator';
-// import { isAdmin } from '../middlewares/authentication';
+import { validateRequest } from '../middlewares/validators/requestValidator';
 import MerchantController from '../controller/merchant.conmtroller';
-// import { merchOnBoardRules, merchOnBoard2Rules } from '../middlewares/validationRules';
+import { assignMerchants } from '../middlewares/validators/schemas/merchant.schema';
 
 /**
  * Routes of '/merchnants'
@@ -16,9 +15,8 @@ merchantRouter.get('/transaction-summary', MerchantController.txnSummary);
 merchantRouter.get('/terminal-performance/:mid', MerchantController.terminalPerformance);
 
 merchantRouter.get('/onboard', MerchantController.getOnBoard);
-// merchantRouter.post('/onboard',  MerchantController.onBoard);
-// merchantRouter.patch('/onboard',  MerchantController.onBoard2);
-// merchantRouter.post('/approve',  MerchantController.approveOnBoard);
-merchantRouter.patch('/approve',  MerchantController.setDataOnBoard);
+merchantRouter.post('/onboard',  validateRequest(assignMerchants), MerchantController.createMerchant);
+merchantRouter.patch('/update/:mid',  MerchantController.update);
+merchantRouter.patch('/activate-deactivate/:merchantCode',  MerchantController.activateDeactvateMerchant);
 
 export default merchantRouter;

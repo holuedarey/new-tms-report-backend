@@ -80,10 +80,19 @@ protected matchApproved;
 
     let merchants = await Merchant.aggregate([
       { $match: filter },
+
       { $sort: { created_at: -1 } },
+      {
+        '$lookup': {
+          'from': 'users', 
+          'localField': 'supportStaff', 
+          'foreignField': '_id', 
+          'as': 'supportStaff'
+        }
+      },
       { $skip: offset },
       { $limit: limit },
-      { $project },
+      // { $project },
     ]); 
     if (!merchants.length) {
       // const merchant = await this.getSyncMerch();
@@ -99,16 +108,18 @@ protected matchApproved;
    * @param {String} merchant_id
    * @returns {Object}
    */
-  async getMerchant(merchant_id) {
-    let merchant:IMerchant = await Merchant.findOne({ merchant_id }).select('-password').lean();
-    console.log('merchant : ', merchant)
-
-    // if (!merchant) merchant = await this.getSyncMerch(merchant_id);
-
-    if (merchant) {
-      merchant.terminals = await TerminalService.getMerchantTIDs(merchant_id);
-      merchant.terminals_count = merchant.terminals.length;
-    }
+  async getMerchant(merchantCode) {
+    let merchant:any = await Merchant.aggregate([
+      { $match: {merchantCode} },
+      {
+        '$lookup': {
+          'from': 'terminalconfigs', 
+          'localField': 'merchantCode', 
+          'foreignField': 'merchantCode', 
+          'as': 'terminals'
+        }
+      },
+    ]);
     return merchant;
   }
 

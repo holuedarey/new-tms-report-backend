@@ -9,7 +9,7 @@ class AuditEvent extends EventEmitter {
 
         super();
         this.on('complete', (payload) => {
-        console.log("Payload Data,", payload)
+        // console.log("Payload Data,", payload)
 
             setImmediate(async () => {
                const audit = new  AuditTrailService();

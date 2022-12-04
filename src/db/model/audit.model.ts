@@ -31,10 +31,10 @@ import mongoose from 'mongoose';
  export enum AuditEventResources {
   DashboardView = 'pages:dashboard-view',
   UsersView = 'User Management',
-  TerminalView = 'pages:service-band-view',
-  MerchantView = 'pages:analytics-module-view',
-  NotificationView = 'pages:load-point-analytics-view',
-  LoadPointsView = 'pages:load-point-analytics-view'
+  TerminalView = 'Terminal Management',
+  MerchantView = 'Merchant Management',
+  NotificationView = 'Notification Management',
+
 }
 
 export enum AuditActionResources {
@@ -43,8 +43,14 @@ export enum AuditActionResources {
   UsersUpdate= 'User Update',
   UsersLogin= 'User Login',
   UsersActivate= 'User Activation',
-  TerminalView = 'pages:service-band-view',
-  MerchantView = 'pages:analytics-module-view',
+  TerminalCreate = 'Terminal Creation',
+  TerminalUpdate = 'Terminal Update',
+  TerminalActivate = 'Terminal Activation',
+
+  MerchantCreate = 'Merchant Creation',
+  MerchantUpdate = 'Merchant Update',
+  MerchantActivate = 'Merchant Activation',
+
   NotificationView = 'pages:load-point-analytics-view',
   LoadPointsView = 'pages:load-point-analytics-view'
 }

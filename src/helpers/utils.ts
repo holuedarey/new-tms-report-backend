@@ -10,7 +10,7 @@ import crypto from "crypto";
 import CryptoJS from "crypto-js";
 const { validationResult } = require("express-validator");
 import xlsJson from 'json2xls';
-import Merchants from '../db/model/merchants.model';
+import Merchants from '../db/model/merchant.model';
 import SimpleNodeLogger from 'simple-node-logger';
 import Excel from 'exceljs';
 import { Request } from 'express';
