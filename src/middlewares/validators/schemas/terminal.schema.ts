@@ -26,7 +26,7 @@ const assignTerminal = Joi.object(
         downloadStatus: Joi.string().required().allow("Priority", "Standard"), // Priority || Standard
         canDoAgencyBanking: Joi.boolean().required(),
         canDoPurchase: Joi.boolean().required(),
-
+        organizationNotificationId: Joi.string().optional().allow(null, "paysure"),
         username: Joi.string(),
         role: Joi.string(),
         merchantcode: Joi.string(),
