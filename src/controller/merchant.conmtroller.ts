@@ -189,7 +189,7 @@ class MerchantController {
     try {
       const merchants = await MerchantService.getMerchants(page, limit, search, mids);
 
-      ApiResponse.send(res, apiStatusCodes.success, '', merchants.rows);
+      ApiResponse.send(res, apiStatusCodes.success, '', merchants);
     } catch (error) {  ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
 

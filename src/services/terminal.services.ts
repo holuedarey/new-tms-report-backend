@@ -1324,8 +1324,8 @@ class TerminalServices implements ITerminalServices {
       item.active = new Date().getTime() - new Date(item.last_connect_date).getTime() < activeTime * 1000;
       return item;
     });
-
-    return { rows: data };
+    const count =  await TerminalConfig.countDocuments(filter) || 0;
+    return { rows: data, count };
   }
 
 

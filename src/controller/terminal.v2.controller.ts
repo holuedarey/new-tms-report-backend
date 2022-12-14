@@ -85,7 +85,7 @@ class TerminalV2Controller {
         req.query.search
       );
       ApiResponse.send(res, apiStatusCodes.success, '', {
-        data: terminals.rows,
+        data: terminals.rows, count : terminals.count
       });
     } catch (error) {
       ApiResponse.error(res, apiStatusCodes.serverError, error, null);

@@ -98,8 +98,10 @@ protected matchApproved;
       // const merchant = await this.getSyncMerch();
       // if (merchant) merchants = [merchant];
     }
+    const count =  await Merchant.countDocuments() || 0;
+
     return {
-      rows: merchants,
+      rows: merchants, count
     };
   }
 

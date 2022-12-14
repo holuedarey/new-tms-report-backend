@@ -241,7 +241,9 @@ class UserServices {
                 }
             },
         ]);
-        return users;
+        const count =  await usersModel.countDocuments(this.$match) || 0;
+
+        return {users, count};
 
 
     }

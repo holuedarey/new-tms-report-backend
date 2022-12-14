@@ -283,7 +283,8 @@ class TransactionService {
             ? binConverter(item.panNo).bank
             : "NIL");
     });
-    return transactions;
+    const count =  await this.Transaction.countDocuments(this.$match) || 0;
+    return {transactions, count};
   }
   async timeOld() {
     console.log("data serv", process.env.TZ);
