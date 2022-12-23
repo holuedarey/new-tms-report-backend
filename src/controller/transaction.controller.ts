@@ -175,6 +175,60 @@ class TransactionController {
   }
 
   /**
+ * This handles getting transactions for every hour for the transaction chart.
+ * @param {express.Request} req Express request param
+ * @param {express.Response} res Express response param
+ */
+  async timeIncome(req, res) {
+    const { date, type } = req.query;
+
+    const { user } = req;
+    const range = ['daily', 'weekly', 'monthly', 'yearly'].includes(type) ? type.substring(0, 1) : 'd';
+    // const { merchant_id: loggedInMerch = null } = user;
+
+    try {
+      const transServ = new TransactionService();
+      transServ.setDate(date || curDate()).setMerchant(null);
+
+      let  data = await transServ.time(range, date || curDate());
+      let income = data['successful'].map(el => {
+        return {
+          ptsp: el * 0.005,
+          tmo: el * 0.005
+        }
+      })
+      ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
+        income,
+      });
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
+  }
+
+  /**
+* This handles getting transactions statistics.
+* @param {express.Request} req Express request param
+* @param {express.Response} res Express response param
+*/
+  async statIncome(req, res) {
+    const { startdate, date, enddate } = req.query;
+
+    const { user } = req;
+    // const { merchant_id: loggedInMerch = null } = user;
+
+    try {
+      const transServ = new TransactionService();
+      transServ.setDate(startdate || date || curDate(), enddate).setMerchant(null);
+
+      let stats = await transServ.stat();
+      let resp ={
+        ptsp : stats.success_count * 0.005,
+        tmo : stats.success_count * 0.005
+      }
+      ApiResponse.send(res, apiStatusCodes.success, '', {
+        data: resp,
+      });
+    } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
+  }
+  /**
   * This handles getting transactions statistics.
   * @param {express.Request} req Express request param
   * @param {express.Response} res Express response param

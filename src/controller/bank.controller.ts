@@ -87,6 +87,21 @@ class BankController {
 
     }
 
+    public async getBankTransactionWithIncome(request: Request, response: Response) {
+
+        try {
+
+            const responseData = await bankServices.bankTransactionWithIcomeAmount(request.query);
+
+            return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data retrieved successfully");
+
+        } catch (error) {
+            
+           return ApiResponse.error(response, apiStatusCodes.serverError, null,error);
+        }
+
+    }
+
     public async getBankTransactionWithCardSchemePercentage(request: Request, response: Response) { 
 
         try {

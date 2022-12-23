@@ -273,6 +273,17 @@ class UserServices {
                 }
               }
             ],
+            "total": [
+                { $match: {} },
+                {
+                  $group: {
+                    _id: 0,
+                    count: {
+                      $sum: 1
+                    }
+                  }
+                }
+              ],
           };
       
           //console.log(facet);

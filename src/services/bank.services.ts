@@ -243,6 +243,55 @@ class BankSummaryServices {
         };
     }
 
+
+    public async bankTransactionWithIcomeAmount(filter: any){
+        let match: any = {statusCode : "00"};
+
+        let group = {
+            _id : {status :"$statusCode",statusMessage : "$messageReason"},
+            totalAmount : { $sum : "$totalAmount"},
+            totalVolume : {$sum : "$transactionCount"},
+            
+        };
+
+        let project = {
+            _id : 0,
+            status : "$_id.status",
+            statusMessage : "$_id.statusMessage",
+            totalAmount : "$totalAmount",
+            totalVolume : "$totalVolume",
+            tmo: { $multiply: [ "$totalAmount",  0.0005 ] } ,
+            ptsp: { $multiply: [ "$totalAmount",  0.0005 ] } ,
+        }
+
+        if(filter.bank)match.bankCode = filter.bank; 
+
+        match = Util.setRange(match,filter);
+
+        console.log(match);
+
+        let transactions = await BankSummary.aggregate([
+            { $match: match },
+            { $group: group },
+            { $sort: { totalVolume: -1 } },
+            {$project : project}
+        ]).allowDiskUse(true).read("secondary");
+        console.log("transactions", transactions);
+
+        let totalVolume = transactions.reduce((a, b) => a + (b["totalVolume"] || 0), 0);
+
+        console.log(`total : ${totalVolume}`)
+
+        transactions.forEach(t=>{
+            t.percent = (t.totalVolume*100)/totalVolume;
+        })
+
+        return {
+            bank : filter.bank || "All",
+            statuses : transactions[0]
+        };
+    }
+
     public async bankTransactionWithCardSchemePercentage(filter: any){
         let match: any = {};
 

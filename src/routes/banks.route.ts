@@ -27,6 +27,8 @@ banksRoute.get('/get-least-performing', verifyToken, bankController.getLeastBank
 banksRoute.get('/get-top-performing', verifyToken, bankController.getTopBanksSummary);
 
 banksRoute.get('/get-top-error', verifyToken, bankController.getTopError);
+banksRoute.get('/income', verifyToken, bankController.getBankTransactionWithIncome);
+
 
 
 export default banksRoute;

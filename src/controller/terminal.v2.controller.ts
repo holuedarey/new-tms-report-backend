@@ -6,6 +6,8 @@ import TransactionService from '../services/transaction.services';
 import terminalConfigsModel from '../db/model/terminalConfigs.model';
 import { validateMongoID } from '../helpers/util';
 import Merchant from '../db/model/merchant.model';
+import TransactionServices from "../services/transaction.services";
+import Utils from "../helpers/utils";
 
 class TerminalV2Controller {
 
@@ -84,6 +86,35 @@ class TerminalV2Controller {
         merchant,
         req.query.search
       );
+      // let terminal = terminals['rows']
+      // .map((i: any) => i.terminalId)
+      // .filter((i) => i !== null);
+      // let ser = [];
+      // const items = terminals['rows'].map(async (terminal: any, index) => {
+      //   if (terminal.terminalModel) {
+      //     await setTimeout(() => { }, 5000);
+  
+      //     const transServ = new TransactionServices();
+      //     let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
+      //     const type = terminal?.terminalModel.split(" ")[0];
+      //     const model = terminal?.terminalModel.split(" ")[1];
+  
+  
+      //     const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+      //     const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+  
+      //     const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
+  
+      //     terminal.type = type;
+      //     terminal.model = model;
+      //     // state.serialNumber = undefined;
+      //     ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
+  
+  
+      //   }
+      // });
+      // const resolved = await Promise.all(items)
+  
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: terminals.rows, count : terminals.count
       });
