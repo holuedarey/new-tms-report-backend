@@ -86,35 +86,33 @@ class TerminalV2Controller {
         merchant,
         req.query.search
       );
-      // let terminal = terminals['rows']
-      // .map((i: any) => i.terminalId)
-      // .filter((i) => i !== null);
-      // let ser = [];
-      // const items = terminals['rows'].map(async (terminal: any, index) => {
-      //   if (terminal.terminalModel) {
-      //     await setTimeout(() => { }, 5000);
+      let terminal = terminals['rows'].map((i: any) => i.terminalId).filter((i) => i !== null);
+      let ser = [];
+      // console.log(terminal);
+      const items = terminals['rows'].map(async (terminal: any, index) => {
+        if (terminal.terminalId) {
+          await setTimeout(() => { }, 5000);
   
-      //     const transServ = new TransactionServices();
-      //     let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
-      //     const type = terminal?.terminalModel.split(" ")[0];
-      //     const model = terminal?.terminalModel.split(" ")[1];
-  
-  
-      //     const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-      //     const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-  
-      //     const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
-  
-      //     terminal.type = type;
-      //     terminal.model = model;
-      //     // state.serialNumber = undefined;
-      //     ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
+          const transServ = new TransactionServices();
+          let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
+          const type = terminal?.terminalModel.split(" ")[0];
+          const model = terminal?.terminalModel.split(" ")[1];
   
   
-      //   }
-      // });
-      // const resolved = await Promise.all(items)
+          const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+          const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
   
+          const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
+  
+          terminal.type = type;
+          terminal.model = model;
+          // state.serialNumber = undefined;
+          ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
+        }
+      });
+      const resolved = await Promise.all(items)
+  
+      console.log("result data :: ", ser);
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: terminals.rows, count : terminals.count
       });

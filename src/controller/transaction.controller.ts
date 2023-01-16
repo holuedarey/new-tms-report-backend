@@ -190,7 +190,7 @@ class TransactionController {
       const transServ = new TransactionService();
       transServ.setDate(date || curDate()).setMerchant(null);
 
-      let  data = await transServ.time(range, date || curDate());
+      let data = await transServ.time(range, date || curDate());
       let income = data['successful'].map(el => {
         return {
           ptsp: el * 0.005,
@@ -219,9 +219,9 @@ class TransactionController {
       transServ.setDate(startdate || date || curDate(), enddate).setMerchant(null);
 
       let stats = await transServ.stat();
-      let resp ={
-        ptsp : stats.success_count * 0.005,
-        tmo : stats.success_count * 0.005
+      let resp = {
+        ptsp: stats.success_count * 0.005,
+        tmo: stats.success_count * 0.005
       }
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: resp,
@@ -420,6 +420,7 @@ class TransactionController {
         amount: `$${transMod.getField('amount')}`,
         transaction_date: `$${transMod.getField('transaction_date')}`,
         merchant_id: `$${transMod.getField('merchant_id')}`,
+        merchant_address: `$${transMod.getField('merchant_address')}`,
         merchant_name: `$${transMod.getField('merchant_name')}`,
         rrn: `$${transMod.getField('rrn')}`,
         online_pin: `$onlinePin`,

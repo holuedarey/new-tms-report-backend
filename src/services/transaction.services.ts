@@ -240,6 +240,7 @@ class TransactionService {
       amount: `$${transMod.getField('amount')}`,
       transaction_date: `$${transMod.getField('transaction_date')}`,
       merchant_id: `$${transMod.getField('merchant_id')}`,
+      merchant_address: `$${transMod.getField('merchant_address')}`,
       merchant_name: `$${transMod.getField('merchant_name')}`,
       rrn: `$${transMod.getField('rrn')}`,
       online_pin: `$onlinePin`,

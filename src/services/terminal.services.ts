@@ -1281,10 +1281,15 @@ class TerminalServices implements ITerminalServices {
       filter.terminal_id = { $in: tIDs };
     } else if (search) {
       filter.$or = [
-        { merchant_id: { $regex: getRegExp(search) } },
-        { terminal_id: { $regex: getRegExp(search) } },
-        { serial_no: { $regex: getRegExp(search) } },
-        { assigned_phone: { $regex: getRegExp(search) } },
+        { merchantCode: { $regex: getRegExp(search) } },
+        { terminalId: { $regex: getRegExp(search) } },
+        { serialNumber: { $regex: getRegExp(search) } },
+        { phone: { $regex: getRegExp(search) } },
+        { email: { $regex: getRegExp(search) } },
+        { applicationVersion: { $regex: getRegExp(search) } },
+        { organizationNotificationId: { $regex: getRegExp(search) } },
+
+        
       ];
     }
 

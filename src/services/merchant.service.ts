@@ -28,7 +28,7 @@ protected matchApproved;
   async create(data) {
     const isSingle = !Array.isArray(data);
     try {
-      if (isSingle && data.merchant_id) await Merchant.updateOne({ merchant_id: data.merchant_id }, data, { upsert: true });
+      if (isSingle && data.merchantCode) await Merchant.updateOne({ merchantCode: data.merchantCode }, data, { upsert: true });
       else await Merchant.insertMany(isSingle ? [data] : data, { ordered: false, rawResult: true });
     } catch (error) {
       Logger.log(error.message);
