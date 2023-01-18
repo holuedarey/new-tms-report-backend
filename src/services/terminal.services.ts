@@ -1276,9 +1276,9 @@ class TerminalServices implements ITerminalServices {
     const offset = (page - 1) * limit;
 
     const filter = { ...this.match };
-    if (merchant) filter.merchant_id = merchant;
+    if (merchant) filter.merchantCode = merchant;
     if (tIDs.length) {
-      filter.terminal_id = { $in: tIDs };
+      filter.terminalId = { $in: tIDs };
     } else if (search) {
       filter.$or = [
         { merchantCode: { $regex: getRegExp(search) } },
@@ -1288,6 +1288,7 @@ class TerminalServices implements ITerminalServices {
         { email: { $regex: getRegExp(search) } },
         { applicationVersion: { $regex: getRegExp(search) } },
         { organizationNotificationId: { $regex: getRegExp(search) } },
+        { organisationName: { $regex: getRegExp(search) } },
 
         
       ];

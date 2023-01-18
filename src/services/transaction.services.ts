@@ -274,7 +274,7 @@ class TransactionService {
       { $project}
     ]);
     transactions.map((item) => {
-      item.transaction_date = moment(item.transaction_date).add(1, 'hours');
+      // item.transaction_date = moment(item.transaction_date).add(1, 'hours');
       (item.brand =
         binConverter(item.panNo) !== undefined
           ? binConverter(item.panNo).brand
@@ -603,6 +603,8 @@ class TransactionService {
     const { total_value = 0 } = data;
     const success_value = ((successCounter || [])[0] || {}).totalAmount || 0;
     const failed_value = total_value - success_value;
+    const ptsp = success_value * 0.005;
+    const tmo = success_value * 0.005;
 
     return {
       total_value,
