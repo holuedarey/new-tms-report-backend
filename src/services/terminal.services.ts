@@ -1289,32 +1289,10 @@ class TerminalServices implements ITerminalServices {
         { applicationVersion: { $regex: getRegExp(search) } },
         { organizationNotificationId: { $regex: getRegExp(search) } },
         { organisationName: { $regex: getRegExp(search) } },
-
+        { terminalModel: { $regex: getRegExp(search) } },
         
       ];
     }
-
-    const $project = {
-      terminal_id: 1,
-      assigned_phone: 1,
-      software_version: 1,
-      serial_no: 1,
-      address_line_one: 1,
-      installed_date: 1,
-      last_connect_date: 1,
-      merchant_id: 1,
-      type: 1,
-      model: 1,
-      network: 1,
-      signal: 1,
-      charging_status: 1,
-      printer_status: 1,
-      battery_level: 1,
-      geo_address: 1,
-      lat: 1,
-      lon: 1,
-      active: 1,
-    };
 
     let terminals = await TerminalConfig.aggregate([
       { $match: filter },

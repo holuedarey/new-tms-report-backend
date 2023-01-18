@@ -610,6 +610,8 @@ class TransactionService {
       total_value,
       success_value,
       failed_value,
+      ptsp,
+      tmo
     };
   }
 
