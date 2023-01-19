@@ -849,7 +849,7 @@ class Utils {
     }
   
     public static async pullFile(fileName: string) {
-      let filename = `Report/${fileName}`;
+      let filename = `files/${fileName}`;
   
       if (fs.existsSync(filename)) {
         return filename;

@@ -3,7 +3,7 @@ import transactionServices from "../services/transaction.servicesV2";
 import ApiResponse from "../helpers/apiResponse";
 import { apiStatusCodes } from "../helpers/constants";
 
-class TransactionController {
+class TransactionControllerV2 {
   constructor() {}
 
   public async getTransactionRequery(request: Request, response: Response) {
@@ -149,4 +149,4 @@ class TransactionController {
   }
 }
 
-export default TransactionController;
+export default TransactionControllerV2;

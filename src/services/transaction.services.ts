@@ -6,6 +6,7 @@ import TerminalService from "../services/terminal.services";
 import { checkNumber, generateFilename, getReportHeaders, removeFile, curDate, getRegExp, binConverter } from "../helpers/util";
 import { transMod } from "../config";
 import ExcelJS from 'exceljs';
+import Utils from "../helpers/utils";
 
 class TransactionService {
 
@@ -1152,6 +1153,42 @@ class TransactionService {
 
     return transactionVolume.reduce((a, b) => a + b, 0);
   }
+
+  public async getGeneratedFile(data: any) {
+    let pendingFiles = process.env.gen_files || "";
+
+    if (pendingFiles) {
+      if (pendingFiles.includes(data.filename)) {
+        return "pending";
+      }
+    }
+
+    let file: any = "";
+    try {
+      file = await Promise.race([
+        new Promise((resolve, reject) => {
+          let x = setTimeout(() => {
+            clearTimeout(x);
+            reject("pending");
+          }, 1 * 1000);
+        }).then(),
+
+        new Promise((resolve, reject) => {
+          Utils.pullFile(data.filename)
+            .then((data) => {
+              resolve(data);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        }),
+      ]);
+    } catch (error) {
+      return "pending";
+    }
+    return file;
+  }
+
 }
 
 export default TransactionService;

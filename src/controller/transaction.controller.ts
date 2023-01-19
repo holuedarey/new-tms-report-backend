@@ -389,7 +389,7 @@ class TransactionController {
 
     //   const data = transactions.map((item) => {
     //     const prevTran = prevTransactions.find(rec => rec.terminal_id === item.terminal_id) || {};
-    //     item.value_change = (item.trans_value || 0) - (prevTran.trans_value || 0);
+    //     item.value_chandownloadge = (item.trans_value || 0) - (prevTran.trans_value || 0);
     //     item.volume_change = (item.trans_volume || 0) - (prevTran.trans_volume || 0);
     //     return item;
     //   });
@@ -597,6 +597,47 @@ class TransactionController {
         data: `${process.env.API_URL}/files/${file}`,
       });
     } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
+  }
+
+
+
+  public async getGeneratedFile(request, response) {
+    try {
+      let body = request.query;
+      console.log("get here ", body);
+
+      const transServ = new TransactionService();
+      let data = await transServ.getGeneratedFile(body);
+
+      console.log(data);
+      if (!data) {
+        return ApiResponse.error(
+          response,
+          apiStatusCodes.notFound,
+          null,
+          "Could not find requested resource"
+        );
+      }
+
+      if (data == "pending") {
+        return ApiResponse.error(
+          response,
+          apiStatusCodes.success,
+          null,
+          "Requested file is pending for download"
+        );
+      }
+
+      return response.download(data);
+    } catch (error) {
+      console.log(error)
+      return ApiResponse.error(
+        response,
+        apiStatusCodes.serverError,
+        null,
+        error
+      );
+    }
   }
 }
 

@@ -1,10 +1,10 @@
 // import express from 'express';
-// import { transactionController } from '../controller/index.controller';
+// import { TransactionControllerV2 } from '../controller/transaction.routev2';
 // import { validateStaticAuthorization, verifyToken } from '../middlewares/validators/requestValidator';
 // import { extractCSVData } from '../middlewares/csvupload.middleware';
 // import utils from '../helpers/utils';
 
-// const transactionRoute = express.Router();
+const transactionRoute = express.Router();
 // const singleUploader = utils.multerTempUploadHandler().single('file');
 
 // transactionRoute.get('/requery', verifyToken, transactionController.getTransactionRequery);
@@ -18,7 +18,7 @@
 // transactionRoute.get('/:type/generate-file', verifyToken, transactionController.generateFileTlm);
 
 // // type = tlm || vas
-// transactionRoute.get('/:type/download-file', verifyToken, transactionController.getGeneratedFile);
+// transactionRoute.get('/download-file', verifyToken, transactionController.getGeneratedFile);
 
 
 

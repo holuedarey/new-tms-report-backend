@@ -37,6 +37,8 @@ const transactionRouter = express.Router();
 
 transactionRouter.get('/history', TransactionController.history);
 transactionRouter.get('/download', TransactionController.downloadJournal);
+transactionRouter.get('/download-file', TransactionController.getGeneratedFile);
+
 transactionRouter.get('/time', TransactionController.time);
 transactionRouter.get('/time-income', TransactionController.timeIncome);
 transactionRouter.get('/stats-income', TransactionController.statIncome);
