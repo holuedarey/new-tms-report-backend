@@ -246,11 +246,11 @@ class TransactionService {
       rrn: `$${transMod.getField('rrn')}`,
       online_pin: `$onlinePin`,
       transaction_type: `$transactionType`,
-      merchant_category_code:  `$merchantCategoryCode`,
+      merchant_category_code: `$merchantCategoryCode`,
       processing_code: '$processingCode',
       card_expiry: '$cardExpiry',
-      message_reason : '$messageReason',
-      recievable_amount: { $multiply: [ "$amount", 0.05] },
+      message_reason: '$messageReason',
+      recievable_amount: { $multiply: ["$amount", 0.05] },
       currency_code: `$${transMod.getField('currency_code')}`,
       pan: `$${transMod.getField('pan')}`,
       authcode: `$${transMod.getField('authcode')}`,
@@ -272,7 +272,7 @@ class TransactionService {
       { $sort },
       { $skip: this.$skip },
       { $limit: this.$limit },
-      { $project}
+      { $project }
     ]);
     transactions.map((item) => {
       // item.transaction_date = moment(item.transaction_date).add(1, 'hours');
@@ -285,8 +285,8 @@ class TransactionService {
             ? binConverter(item.panNo).bank
             : "NIL");
     });
-    const count =  await this.Transaction.countDocuments(this.$match) || 0;
-    return {transactions, count};
+    const count = await this.Transaction.countDocuments(this.$match) || 0;
+    return { transactions, count };
   }
   async timeOld() {
     console.log("data serv", process.env.TZ);
@@ -739,18 +739,18 @@ class TransactionService {
       $project.terminal_id = "$_id.terminal_id";
     }
 
-    const totalGroup:any = {
+    const totalGroup: any = {
       _id: null,
       total_volume: { $sum: "$trans_volume" },
       total_value: { $sum: "$trans_value" },
     };
 
-    const $facet:any = {
+    const $facet: any = {
       rows: [{ $skip: this.$skip }, { $limit: this.$limit }],
       total: [{ $group: totalGroup }],
     };
 
-    const pipelines:any = [{ $match: this.$match }, { $group }, { $project }];
+    const pipelines: any = [{ $match: this.$match }, { $group }, { $project }];
 
     if (this.$sort) {
       // pipelines.push({ $sort: this.$sort });
@@ -1080,10 +1080,11 @@ class TransactionService {
   async generateReportTlm(total = 0, filename = "") {
     let filePath = `files/${filename}`;
     let workbook = new ExcelJS.stream.xlsx.WorkbookWriter({ filename: filePath, useStyles: true, useSharedStrings: true });
-    workbook.creator = "Itex System";
+    workbook.creator = "Bizzdesk System";
 
     let workSheet = workbook.addWorksheet("transaction Report");
     // workSheet.columns = [];
+    workSheet.columns = Utils.getReportHeaders() as any;
     console.log("total", total)
     let pages = Math.ceil((total + 5000) / 5000);
 
@@ -1096,14 +1097,12 @@ class TransactionService {
           { $skip: index * 5000 },
           { $limit: 5000 },
         ]);
+        console.log("data for adding: ", txn.length);
         // find({}).skip(index * 5000).limit(5000);
         console.log("index " + index + " pages : " + pages);
         if (txn.length) {
-          txn.map(t => {
-            // const maskPan = getSixMAskPan(t.maskedPan)
-            // const source = t._doc;
-            // const target = { issuer: binConverter(maskPan) !== undefined ? binConverter(maskPan).bank : 'NIL' };
-            // const doc = Object.assign(target, source);
+          txn.forEach((t) => {
+            console.log(t.transactionTime)
             workSheet.addRow(t).commit();
           })
         }
