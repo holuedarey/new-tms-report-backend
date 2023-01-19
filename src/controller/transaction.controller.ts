@@ -191,14 +191,15 @@ class TransactionController {
       transServ.setDate(date || curDate()).setMerchant(null);
 
       let data = await transServ.time(range, date || curDate());
-      let income = data['successful'].map(el => {
-        return {
-          ptsp: el * 0.005,
-          tmo: el * 0.005
-        }
-      })
+      let araryData = [];
+
+      let ptsp = data['successful'].map(el => el * 0.005);
+      let tmo = data['successful'].map(el => el * 0.005);
+      const income = {};
+      income['ptsp'] =  ptsp;
+      income["tmo"] = tmo;
       ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
-        income,
+        income
       });
     } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
