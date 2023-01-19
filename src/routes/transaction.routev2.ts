@@ -4,7 +4,7 @@
 // import { extractCSVData } from '../middlewares/csvupload.middleware';
 // import utils from '../helpers/utils';
 
-const transactionRoute = express.Router();
+// const transactionRoute = express.Router();
 // const singleUploader = utils.multerTempUploadHandler().single('file');
 
 // transactionRoute.get('/requery', verifyToken, transactionController.getTransactionRequery);
