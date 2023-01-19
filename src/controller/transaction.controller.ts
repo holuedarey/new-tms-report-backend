@@ -594,7 +594,7 @@ class TransactionController {
       // const transactions = await transServ.download();
       const file = await transServ.generateReportTlm(data.total, data.filename);
       ApiResponse.send(res, apiStatusCodes.success, 'Retrived Successfully', {
-        data: `${process.env.API_URL}/files/${file}`,
+        data: `${file}`,
       });
     } catch (error) { ApiResponse.error(res, apiStatusCodes.serverError, error, null); }
   }
