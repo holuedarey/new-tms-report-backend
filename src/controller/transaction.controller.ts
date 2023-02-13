@@ -221,8 +221,8 @@ class TransactionController {
 
       let stats = await transServ.stat();
       let resp = {
-        ptsp: stats.success_count * 0.005,
-        tmo: stats.success_count * 0.005
+        ptsp: stats.success_count * 0.0005,
+        tmo: stats.success_count * 0.0005
       }
       ApiResponse.send(res, apiStatusCodes.success, '', {
         data: resp,
@@ -401,6 +401,33 @@ class TransactionController {
     // } catch (error) { ApiResponse.error(res,apiStatusCodes.serverError,error, null); }
   }
 
+
+  public async getTransactionRequery(request, response) {
+    try {
+      const { id } = request.params;
+      if (!validateMongoID(id)) {
+        return ApiResponse.send(response, apiStatusCodes.notFound, '', {
+          error: 'Transaction not found.',
+        });
+      }
+      const transServ = new TransactionService();
+      const responseData = await transServ.getTransaction(id);
+      return ApiResponse.success(
+        response,
+        apiStatusCodes.success,
+        responseData,
+        "Data successfully retrieved"
+      );
+    } catch (error) {
+      return ApiResponse.error(
+        response,
+        apiStatusCodes.serverError,
+        null,
+        error
+      );
+    }
+  }
+  
   /**
   * This handles getting transactions summary for merchants.
   * @param {express.Request} req Express request param

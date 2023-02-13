@@ -288,6 +288,129 @@ class TransactionService {
     const count = await this.Transaction.countDocuments(this.$match) || 0;
     return { transactions, count };
   }
+
+
+  async getTransaction(filter: any, type = null) {
+    let match: any = { _id: filter };
+
+    // if (filter.maskedPan) {
+    //   match.maskedPan = filter.maskedPan;
+    // }
+
+    // if (filter.amount) {
+    //   match.amount = Number(filter.amount);
+    // }
+
+    let transactions: any[] = await this.Transaction.find(match).read("primary");
+
+
+    let transaction: any = transactions.filter((c) => c.MTI == "0200");
+
+    if (transaction.length == 1) transaction = transaction[0];
+    else if (transaction.length == 2)
+      transaction = transaction.find((c) => c.responseCode == "00");
+    else transaction = null;
+
+    let reversal = transactions.find((c) => c.MTI == "0420");
+
+    Utils.fileDataLogger(
+      filter.tid,
+      `transaction : ${JSON.stringify(transactions)}`
+    );
+
+    if (!transaction) return null;
+
+    let pan6 = transaction.maskedPan.substr(0, 6);
+    let pan4 = transaction.maskedPan.substr(transaction.maskedPan.length - 4);
+
+    let customerRef = "";
+    let phone = "";
+    if (transaction.customerRef && type == true) {
+      customerRef = transaction.customerRef.split("~");
+      phone = customerRef.length > 1 ? customerRef[1] : "";
+    }
+
+    let status = "PENDING";
+    if (transaction.responseCode == "00") {
+      status = "SUCCESSFUL";
+
+      if (reversal) {
+        if (reversal.responseCode == "00") {
+          status = "REVERSED";
+        }
+      }
+    } else {
+      status = "FAILED";
+    }
+
+
+    if (!type) {
+      const terminal_details = await TerminalService.getTerminal(transaction.terminalId)
+      const cardType = transaction?.maskedPan
+        ? Utils.getCardType(transaction.maskedPan)
+        : "";
+      const bank = transaction?.terminalId
+        ? Utils.bankfromTID(transaction.terminalId)
+        : "";
+
+
+      return {
+        MTI: transaction.MTI,
+        processingCode: transaction.processingCode,
+        amount: transaction.amount,
+        terminalId: transaction.terminalId,
+        statusCode: transaction.responseCode,
+        maskedPan: transaction.maskedPan,
+        rrn: transaction.rrn,
+        STAN: transaction.STAN,
+        authCode: transaction.authCode,
+        transactionTime: transaction.transactionTime,
+        handlerResponseTime: transaction.handlerResponseTime,
+        merchantId: transaction.merchantId,
+        merchantAddress: transaction.merchantAddress,
+        merchantCategoryCode: transaction.merchantCategoryCode,
+        messageReason: transaction.messageReason,
+        responseCode: transaction.responseCode,
+        notified: transaction.notified || "",
+        customerRef: transaction.customerRef || "",
+        transactionType: transaction.transactionType,
+        vasproduct: transaction.vasproduct || "",
+        scheme: cardType,
+        bank,
+        ...transaction.toObject(),
+        ...terminal_details.toObject(),
+      };
+    }
+    // console.log(transaction);
+
+    let theBody = {
+      amount: transaction.amount,
+      terminalId: transaction.terminalId,
+      referenceNumber: transaction.rrn,
+      datetimeUTC: moment(transaction.transactionTime).format(
+        "YYYY-MM-DDTHH:mm:ss"
+      ),
+      currency: "NGN",
+      narration: "Card Debit",
+      phoneNumber: phone,
+      cardPANFirstSixDigits: pan6,
+      cardPANLastFourDigits: pan4,
+      responseCode: transaction.responseCode,
+      responseMessage: transaction.messageReason,
+      authCode: transaction.authCode,
+      status: status,
+
+    };
+
+    Utils.fileDataLogger(
+      filter.terminalId,
+      `response : ${JSON.stringify(theBody)}`
+    );
+
+    return theBody;
+  }
+
+
   async timeOld() {
     console.log("data serv", process.env.TZ);
     const group = {
