@@ -67,17 +67,6 @@ protected matchApproved;
       filter.$and.push(searchFilter);
     }
 
-    const $project = {
-      merchant_id: 1,
-      merchant_name: 1,
-      merchant_phone: 1,
-      merchant_email: 1,
-      merchant_contact: 1,
-      merchant_address: 1,
-      merchant_account_nr: 1,
-      created_at: 1,
-    };
-
     let merchants = await Merchant.aggregate([
       { $match: filter },
 
