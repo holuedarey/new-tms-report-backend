@@ -58,10 +58,10 @@ protected matchApproved;
     } else if (search) {
       const searchFilter = {
         $or: [
-          { merchant_id: checkNumber(search) ? Number(search) : { $regex: getRegExp(search) } },
-          { merchant_name: { $regex: getRegExp(search) } },
-          { merchant_email: { $regex: getRegExp(search) } },
-          { merchant_phone: checkNumber(search) ? Number(search) : { $regex: getRegExp(search) } },
+          { merchantCode: checkNumber(search) ? Number(search) : { $regex: getRegExp(search) } },
+          { name: { $regex: getRegExp(search) } },
+          { email: { $regex: getRegExp(search) } },
+          { phoneNumber: checkNumber(search) ? Number(search) : { $regex: getRegExp(search) } },
         ],
       };
       filter.$and.push(searchFilter);
