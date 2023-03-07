@@ -49,6 +49,8 @@ transactionRouter.get('/failure-reasons', TransactionController.failureReason);
 transactionRouter.get('/performance-records', TransactionController.performance);
 transactionRouter.get('/receipt/:id', TransactionController.getTransactionRequery);
 // transactionRouter.post('/upload-file',  multerUpload('xlsx_file'), TransactionController.uploadFile);
+transactionRouter.get('/requery', TransactionController.getTransactionRequeryRRN);
+
 
 transactionRouter.get('/bank-summary', TransactionController.banksAndCardSchemesSummary);
 

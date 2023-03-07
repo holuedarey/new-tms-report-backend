@@ -264,6 +264,22 @@ class TerminalV2Controller {
     }
   }
 
+
+  async updateBoard(req: Request, res: Response) {
+    const { data } = req.body;
+
+
+    try {
+      await terminalServices.create(data);
+
+      ApiResponse.send(res, apiStatusCodes.success, '', {
+        message: "Terminals added successfully.",
+      });
+    } catch (error) {
+      ApiResponse.error(res, apiStatusCodes.serverError, error, null);
+    }
+  }
+
   /**
    * This handles getting all terminals.
    * @param {express.Request} req Express request param

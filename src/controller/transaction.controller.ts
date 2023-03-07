@@ -427,6 +427,28 @@ class TransactionController {
       );
     }
   }
+
+
+  async getTransactionRequeryRRN(request, response) {
+    try {
+      const transServ = new TransactionService();
+      const responseData = await transServ.getTransactionRRN(request.query);
+    
+      return ApiResponse.success(
+        response,
+        apiStatusCodes.success,
+        responseData,
+        "Data successfully retrieved"
+      );
+    } catch (error) {
+      return ApiResponse.error(
+        response,
+        apiStatusCodes.serverError,
+        null,
+        error
+      );
+    }
+  }
   
   /**
   * This handles getting transactions summary for merchants.
