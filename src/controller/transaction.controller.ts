@@ -11,6 +11,7 @@ class TransactionController {
       const responseData = await transactionServices.getTransaction(
         request.query
       );
+      if(responseData == null) responseData = "Record not found";
       return ApiResponse.success(
         response,
         apiStatusCodes.success,
