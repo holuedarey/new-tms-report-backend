@@ -7,7 +7,7 @@ import utils from '../helpers/utils';
 const transactionRoute = express.Router();
 const singleUploader = utils.multerTempUploadHandler().single('file');
 
-transactionRoute.get('/requery', verifyToken, transactionController.getTransactionRequery);
+transactionRoute.get('/requery', transactionController.getTransactionRequery);
 
 transactionRoute.get('/', verifyToken, transactionController.getTransactions);
 
