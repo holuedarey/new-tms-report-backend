@@ -8,7 +8,7 @@ class TransactionController {
 
   public async getTransactionRequery(request: Request, response: Response) {
     try {
-      const responseData = await transactionServices.getTransaction(
+      let responseData = await transactionServices.getTransaction(
         request.query
       );
       if(responseData == null) responseData = "Record not found";
