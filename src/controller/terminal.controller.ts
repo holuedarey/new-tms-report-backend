@@ -70,7 +70,7 @@ class TerminalController {
             const queryParams: any = request.query;
 
             const terminalDetails: any = await terminalServices.getAllTerminalsByMerchantCode(request.params.merchantCode, queryParams);
-            console.log(terminalDetails)
+            // console.log(terminalDetails)
 
             if (!terminalDetails) return ApiResponse.error(response, apiStatusCodes.badRequest, null, "Could not fetch terminals mapped to walletId");
 
@@ -394,7 +394,7 @@ class TerminalController {
             return ApiResponse.error(response, apiStatusCodes.serverError, null, error);
         }
     }
-    public async remoteUpdateTerminal(request: Request, response: Response) {
+    public async remoteUpdateTerminal(request, response: Response) {
         try {
             if (!request?.file) {
                 return ApiResponse.error(response, apiStatusCodes.serverError, null, "No file provided!");
