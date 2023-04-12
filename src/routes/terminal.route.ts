@@ -29,7 +29,7 @@ terminalRoute.get('/inactive-active/:merchantCode',
 
 
 terminalRoute.get('/getTerminals/:merchantCode',
-    verifyToken,
+    // verifyToken,
     terminalController.getTerminalsByMerchantCodeAndWalletId);
 
 

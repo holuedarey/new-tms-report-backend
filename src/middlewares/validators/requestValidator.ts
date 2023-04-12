@@ -123,7 +123,7 @@ const validateAssignTerminalRequest = () => {
     }
 }
 
-const verifyToken = async (req: Request, res: Response, next: Function) => {
+const verifyToken = async (req, res: Response, next: Function) => {
 
     const authToken = req.body.token || req.query.token
         || req.headers['x-access-token']
