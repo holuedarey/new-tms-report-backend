@@ -8,9 +8,19 @@ class TransactionController {
 
   public async getTransactionRequery(request: Request, response: Response) {
     try {
-      const responseData = await transactionServices.getTransaction(
+      let responseData = await transactionServices.getTransaction(
         request.query
       );
+      if(responseData == null){
+        responseData = "Record not found";
+        console.log("herree")
+        return ApiResponse.error(
+          response,
+          apiStatusCodes.notFound,
+          responseData,
+          "Record not Available"
+        );
+      } 
       return ApiResponse.success(
         response,
         apiStatusCodes.success,

@@ -23,7 +23,7 @@ mongoose.connect(dbConfig.DATABASE_URL, dbConfig.options, (err) => {
   if (err) Logger.log(err);
   else { Logger.log(`Connected to mongodb successfully on ${process.env.NODE_ENV}`); }
 });
-
+mongoose.set('debug', true);
 /** Enable Cross Origin Resource Sharing */
 app.use(cors());
 app.use(express.static(path.join(__dirname, '/../uploads')));
