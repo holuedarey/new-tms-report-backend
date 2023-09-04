@@ -68,9 +68,9 @@ class TerminalController {
         try {
 
             const queryParams: any = request.query;
-
+            // console.log("params: ", queryParams)
             const terminalDetails: any = await terminalServices.getAllTerminalsByMerchantCode(request.params.merchantCode, queryParams);
-            console.log(terminalDetails)
+            // console.log("terminalDetails", terminalDetails)
 
             if (!terminalDetails) return ApiResponse.error(response, apiStatusCodes.badRequest, null, "Could not fetch terminals mapped to walletId");
 

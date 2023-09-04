@@ -98,55 +98,56 @@ class TerminalServices implements ITerminalServices {
       // }
 
 
-      params.merchantCode = merchantCode;
+      // params.merchantCode = merchantCode;
       delete params.active;
     }
     console.log("payload:", params)
 
 
-    const terminals = await TerminalConfig.find({ ...params });
+    const terminals = await TerminalConfig.find({});
 
+    console.log("terminals:", terminals)
 
 
     let terminal = terminals
-      .map((i: any) => i.terminalId)
-      .filter((i) => i !== null);
+      .map((i: any) => i)
+      .filter((i) => i.terminalId !== null);
 
-    const terminalStates = await TerminalStates.aggregate([
-      { $match: { terminalId: { $in: terminal } } },
-    ]);
+    // const terminalStates = await TerminalStates.aggregate([
+    //   { $match: { terminalId: { $in: terminal } } },
+    // ]);
 
-    console.log("terminalStates:", terminalStates)
+    // console.log("terminalStates:", terminalStates)
 
-    const ser = [];
-    const items = terminals.map(async (terminal: any, index) => {
-      if (terminal.terminalModel) {
-        await setTimeout(() => { }, 5000);
+    // const ser = [];
+    // const items = terminals.map(async (terminal: any, index) => {
+    //   if (terminal.terminalModel) {
+    //     await setTimeout(() => { }, 5000);
 
-        const state = terminalStates.find((i: any) => i.terminalId === terminal?.terminalId);
-        // const transactionDate = state?.lastTransactionTIme ? (new Date().getTime() - new Date(state.lastTransaction).getTime()) : 0;
-        const transServ = new TransactionServices();
-        let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
-        const type = terminal?.terminalModel.split(" ")[0];
-        const model = terminal?.terminalModel.split(" ")[1];
-
-
-        const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-        const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
-
-        const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
-
-        terminal.type = type;
-        terminal.model = model;
-        // state.serialNumber = undefined;
-        ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
+    //     const state = terminalStates.find((i: any) => i.terminalId === terminal?.terminalId);
+    //     // const transactionDate = state?.lastTransactionTIme ? (new Date().getTime() - new Date(state.lastTransaction).getTime()) : 0;
+    //     const transServ = new TransactionServices();
+    //     let lastTransactionAmount = terminal?.terminalId ? await transServ.checkLastTransaction(terminal?.terminalId) : ""
+    //     const type = terminal?.terminalModel.split(" ")[0];
+    //     const model = terminal?.terminalModel.split(" ")[1];
 
 
-      }
-    });
-    const resolved = await Promise.all(items)
+    //     const PTSPFeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
+    //     const TMOfeetoday = lastTransactionAmount ? 0.0005 * (parseFloat(lastTransactionAmount) * 0.01) : 0;
 
-    return ser;
+    //     const bank = terminal?.terminalId ? Utils.bankfromTID(terminal?.terminalId) : ""
+
+    //     terminal.type = type;
+    //     terminal.model = model;
+    //     // state.serialNumber = undefined;
+    //     ser.push({ ...terminal.toObject(), type, model, bank, lastTransactionAmount, PTSPFeetoday, TMOfeetoday, })
+
+
+    //   }
+    // });
+    // const resolved = await Promise.all(items)
+
+    return terminal;
   }
 
   public async getActiveAndInactiveSummaryByMerchantCodeandWalletId(
@@ -155,7 +156,6 @@ class TerminalServices implements ITerminalServices {
     summary = false
   ) {
     const params = walletId;
-    console.log(1, merchantCode, walletId)
 
     const terminalObjs = await TerminalConfig.find({ merchantCode: merchantCode });
 

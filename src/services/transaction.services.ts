@@ -7,6 +7,7 @@ import { checkNumber, generateFilename, getReportHeaders, removeFile, curDate, g
 import { transMod } from "../config";
 import ExcelJS from 'exceljs';
 import Utils from "../helpers/utils";
+import terminalServices from "../services/terminal.services";
 
 class TransactionService {
 
@@ -465,7 +466,7 @@ class TransactionService {
 
 
     if (!type) {
-      const terminal_details = await TerminalServices.getTerminal(transaction.terminalId)
+      const terminal_details = await terminalServices.getTerminal(transaction.terminalId)
       const cardType = transaction?.maskedPan
         ? Utils.getCardType(transaction.maskedPan)
         : "";

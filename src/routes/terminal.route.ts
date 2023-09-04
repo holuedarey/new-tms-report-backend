@@ -23,7 +23,7 @@ terminalRoute.get('/detailsbySerialNumber/:serialNumber', verifyToken, terminalC
 terminalRoute.get('/inactive-active/:merchantCode', verifyToken, terminalController.getActiveAndInactiveSummaryByMerchantCodeandWalletId);
 
 
-terminalRoute.get('/getTerminals/:merchantCode',
+terminalRoute.get('/getTerminals/',
     verifyToken,
     terminalController.getTerminalsByMerchantCodeAndWalletId);
 

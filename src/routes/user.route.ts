@@ -14,8 +14,9 @@ const singleUploader = utils.multerTempUploadHandler().single('file');
 
 
 
-userRoute.post('/onboarduser/:method', verifyToken,
-    PolicyConfig.isAdmin,
+userRoute.post('/onboarduser/:method', 
+    // verifyToken,
+    // PolicyConfig.isAdmin,
     singleUploader, extractCSVData,
     validateCreateUserRequest(),
     validateUser,
