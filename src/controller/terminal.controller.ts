@@ -106,16 +106,8 @@ class TerminalController {
             const hostDetails = request.query["byTerminal"] && request.query["byTerminal"] === 'true'
                 ? undefined
                 : await terminalServices.getHostConfigByHostName(terminalDetails.primaryHost);
-
-            let agentDetails = null;
             console.log("hostDetails ::", hostDetails)
-            if (terminalDetails.walletId !== null || terminalDetails.walletId !== "") {
-                const userServ =  new userServices()
-                agentDetails = await userServ.getUserByWalletId(terminalDetails.walletId);
-
-            }
-
-            const responseData = { hostDetails, terminalDetails, agentDetails };
+            const responseData = { hostDetails, terminalDetails };
             // return response.json({error: false, message: "mdhdh"})
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data Retrieved");
