@@ -45,11 +45,15 @@ const validateStaticAuthorization = (req: Request, response: Response, next: Fun
 
 const validateStaticAuthorizationHeader = (req: Request, response: Response, next: Function) => {
 
+    console.log("Data ::", process.env.API_SECRET_KEY);
+    
     const exptecedHash = Utils.doSHA256(process.env.API_SECRET_KEY);
+    console.log("exptecedHash ::", exptecedHash);
 
     const authToken = req.body.token || req.query.token
         || req.headers['x-access-token']
         || req.headers.Authorization || req.headers.authorization;
+        console.log("authToken ::", authToken);
 
     if (!authToken)
         return ApiResponse.error(response, apiStatusCodes.badRequest, null, "Authorization header is required");
