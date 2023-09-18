@@ -14,7 +14,7 @@ import { verifyToken } from '../middlewares/validators/requestValidator';
 
 const indexRoutes = express.Router();
 
-indexRoutes.use('/terminal', verifyToken, terminalRoute);
+indexRoutes.use('/terminal', terminalRoute);
 indexRoutes.use('/merchants', verifyToken, merchantRouter);
 
 indexRoutes.use('/transactions', transactionRoute);

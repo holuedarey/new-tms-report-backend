@@ -91,9 +91,6 @@ class TerminalController {
 
     public async getTerminalDetails(request: Request, response: Response) {
         try {
-
-            console.log("Loggingf::")
-            console.log()
             const queryParams: any = request.query;
             const terminalDetails: any = request.query["byTerminal"] && request.query["byTerminal"] === 'true'
                 ? await terminalServices.getTerminalByTerminalId(request.params.serialNumber)
@@ -106,9 +103,7 @@ class TerminalController {
             const hostDetails = request.query["byTerminal"] && request.query["byTerminal"] === 'true'
                 ? undefined
                 : await terminalServices.getHostConfigByHostName(terminalDetails.primaryHost);
-            console.log("hostDetails ::", hostDetails)
             const responseData = { hostDetails, terminalDetails };
-            // return response.json({error: false, message: "mdhdh"})
 
             return ApiResponse.success(response, apiStatusCodes.success, responseData, "Data Retrieved");
 
