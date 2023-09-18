@@ -26,6 +26,7 @@ terminalRoute.get('/inactive-active/:merchantCode', verifyToken, terminalControl
 terminalRoute.get('/getTerminals/',
     verifyToken,
     terminalController.getTerminalsByMerchantCodeAndWalletId);
+    
 
 
 terminalRoute.get('/details/:serialNumber',
