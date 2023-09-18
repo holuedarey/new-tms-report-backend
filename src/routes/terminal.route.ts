@@ -27,8 +27,6 @@ terminalRoute.get('/getTerminals/',
     verifyToken,
     terminalController.getTerminalsByMerchantCodeAndWalletId);
     
-
-
 terminalRoute.get('/details/:serialNumber',
     validateStaticAuthorizationHeader,
     terminalController.getTerminalDetails);
